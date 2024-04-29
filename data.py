@@ -32,12 +32,13 @@ def extract_tags(data):
     # Flatten the list of lists
     tags = [tag for sentence in sentence_tags for tag in sentence]
 
-    return tags
+    return sentence_tags, tags
 
 
 data = read_data_file("dummy.col")
-y_pred = extract_tags(data)
-y_true = extract_tags(data)
+sentence_tags, _ = extract_tags(data)
+_, y_pred = extract_tags(data)
+_, y_true = extract_tags(data)
 
 """print(data)
 print("y_pred", y_pred)
@@ -50,6 +51,6 @@ conf_matrix = test_eval.multiclass_confusion_matrix()
 precision, recall, f_score = test_eval.precision_recall_fScore(
     beta=1, averagingType="micro"
 )
-print("precision:", precision)
+"""print("precision:", precision)
 print("recall: ", recall)
-print("f_score: ", f_score)
+print("f_score: ", f_score)"""
