@@ -1,6 +1,3 @@
-from evaluation import Evaluation
-
-
 def read_data_file(file_name):
     """
     Reading the CONNLU format file in the following format:
@@ -33,24 +30,3 @@ def extract_tags(data):
     tags = [tag for sentence in sentence_tags for tag in sentence]
 
     return sentence_tags, tags
-
-
-data = read_data_file("dummy.col")
-sentence_tags, _ = extract_tags(data)
-_, y_pred = extract_tags(data)
-_, y_true = extract_tags(data)
-
-"""print(data)
-print("y_pred", y_pred)
-print("y_true", y_true)"""
-
-test_eval = Evaluation(y_pred, y_true)
-conf_matrix = test_eval.multiclass_confusion_matrix()
-# print("conf_matrix", conf_matrix)
-
-precision, recall, f_score = test_eval.precision_recall_fScore(
-    beta=1, averagingType="micro"
-)
-"""print("precision:", precision)
-print("recall: ", recall)
-print("f_score: ", f_score)"""
