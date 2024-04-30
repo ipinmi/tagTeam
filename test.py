@@ -6,7 +6,7 @@ from tag_transition import (
     create_tag_transition_matrix,
 )
 
-data = read_data_file("dummy.col")
+data = read_data_file("dataset/dev.col")
 
 """
 #First Matrix test for evaluation
@@ -45,8 +45,10 @@ tag_transition_counts, tag_counts = tagCount_dictionaries(data)
 tag_transitions_prob, all_tags = calculate_transition_probabilities(
     tag_transition_counts, tag_counts
 )
-transition_matrix = create_tag_transition_matrix(tag_transition_counts, tag_counts, 1)
-# print("transition_matrix", transition_matrix[:2, :])
+transition_matrix = create_tag_transition_matrix(tag_transition_counts, tag_counts, 0)
+print("transition_matrix", transition_matrix[7, :])
+s_index = list(tag_transitions_prob.keys()).index("<s>")
+print("s_index", s_index)
 
 # print("tag_prob", tag_transitions_prob)
-print("all_tags", all_tags)
+# print("all_tags", all_tags)
