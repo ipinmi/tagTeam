@@ -45,10 +45,12 @@ tag_transition_counts, tag_counts = tagCount_dictionaries(data)
 tag_transitions_prob, all_tags = calculate_transition_probabilities(
     tag_transition_counts, tag_counts
 )
+
+tag_index = list(tag_transitions_prob.keys()).index("<s>")
+print("tag_index", tag_index)
+
 transition_matrix = create_tag_transition_matrix(tag_transition_counts, tag_counts, 0)
-print("transition_matrix", transition_matrix[7, :])
-s_index = list(tag_transitions_prob.keys()).index("<s>")
-print("s_index", s_index)
+print("transition_matrix", transition_matrix[tag_index, :])
 
 # print("tag_prob", tag_transitions_prob)
 # print("all_tags", all_tags)
