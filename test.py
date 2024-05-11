@@ -6,7 +6,7 @@ from tag_transition import (
     create_tag_transition_matrix,
 )
 
-data = read_data_file("dataset/dev.col")
+data = read_data_file("/Users/ipinmi/Desktop/pos/dataset/dev.col")
 
 """
 #First Matrix test for evaluation
