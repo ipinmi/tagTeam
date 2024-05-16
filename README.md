@@ -20,12 +20,13 @@ Computational Linguistics Team Laboratory Project on Part-Of-Speech Tagging.
    - Numpy
 2. Module Structure:
    - data.py: Data processing module
-   - evaluation.py: Evaluation module
+   - evaluation.py: Evaluating the performance of the POS tagger using metrics including precision, recall, and F1-score
    - tag_transition.py: Tag transition module
-   - emission.py: Emission module
-   - hmm.py: Hidden Markov Model module
-   - pred_eval.py: Prediction evaluation module
-   - main.py: Main module
+   - emission.py: Constructing the emission matrix, which contains the probabilities of emitting each word from each POS tag
+   - matrices.py: Building transition and emission matrices from the training data and saving them to files
+   - hmm.py: Implementing the Viterbi algorithm for POS tagging using HMM.
+   - pred_eval.py: Predicting POS tags for sentences and evaluating the predicted tags against the gold standard tags
+   - main.py: Executing the HMM POS tagger and evaluateing its performance
 3. Run the following command to execute the program and get the evaluation results as well as the predictions for the appropriate data:
    `python3 main.py`
 
