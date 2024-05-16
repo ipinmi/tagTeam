@@ -19,14 +19,15 @@ def read_data_file(file_name):
     return data
 
 
-def extract_tags(data):
+def extract_tokens_tags(data):
     """
     Extracting the tags from the data for evaluation in the following format:
     [tag1, tag2, ...] for each sentence.
     """
     sentence_tags = [[tag for _, tag in sentence] for sentence in data]
+    token_sequence = [[word for word, _ in sentence] for sentence in data]
 
     # Flatten the list of lists
-    tags = [tag for sentence in sentence_tags for tag in sentence]
+    all_tags_in_data = [tag for sentence in sentence_tags for tag in sentence]
 
-    return sentence_tags, tags
+    return token_sequence, sentence_tags, all_tags_in_data
