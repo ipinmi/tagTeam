@@ -21,7 +21,7 @@ Computational Linguistics Team Laboratory Project on Part-Of-Speech Tagging.
 2. Module Structure:
    - data.py: Reading data files in the CoNLL format and extracting tokens and tags for evaluation purposes
    - evaluation.py: Evaluating the performance of the POS tagger using metrics including precision, recall, and F1-score
-   - tag_transition.py: Tag transition module
+   - tag_transition.py: computing the transition probabilities between POS tags
    - emission.py: Constructing the emission matrix, which contains the probabilities of emitting each word from each POS tag
    - matrices.py: Building transition and emission matrices from the training data and saving them to files
    - hmm.py: Implementing the Viterbi algorithm for POS tagging using HMM.
