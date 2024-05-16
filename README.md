@@ -28,3 +28,10 @@ Computational Linguistics Team Laboratory Project on Part-Of-Speech Tagging.
    - main.py: Main module
 3. Run the following command to execute the program and get the evaluation results as well as the predictions for the appropriate data:
    `python3 main.py`
+
+## Evaluation Results
+
+**Evaluation results for the dev data:**
+
+- Dev data F1 Score: **[0.93]**
+- Test data F1 Score: **[0.94]**
