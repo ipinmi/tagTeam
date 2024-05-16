@@ -19,7 +19,7 @@ Computational Linguistics Team Laboratory Project on Part-Of-Speech Tagging.
    - Python 3.6
    - Numpy
 2. Module Structure:
-   - data.py: Data processing module
+   - data.py: Reading data files in the CoNLL format and extracting tokens and tags for evaluation purposes
    - evaluation.py: Evaluating the performance of the POS tagger using metrics including precision, recall, and F1-score
    - tag_transition.py: Tag transition module
    - emission.py: Constructing the emission matrix, which contains the probabilities of emitting each word from each POS tag
