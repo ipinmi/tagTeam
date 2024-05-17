@@ -40,4 +40,4 @@ Computational Linguistics Team Laboratory Project on Part-Of-Speech Tagging.
 4. Run the following command to execute the program and get the evaluation results as well as the predictions for the appropriate data:
    `python3 main.py`
 
-<img src="team_lab_project_structure.png" alt="tag_team_project_structure" width="200" height="500/>
+<img src="assets/team_lab_project_structure.png" alt="image" height="500" width="600" >
