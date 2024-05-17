@@ -15,7 +15,7 @@ def run_model():
     tag_index = np.load("tag_index.npy", allow_pickle=True).item()
 
     # Read the appropriate experiment file to get the gold standard tags
-    filepath = "dataset/test.col"
+    filepath = "/mount/studenten/team-lab-cl/pos/test.col"
     gold_standard_data = read_data_file(filepath)
     sentences, _, gold_standard_tags = extract_tokens_tags(gold_standard_data)
 

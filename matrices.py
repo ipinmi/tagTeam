@@ -22,7 +22,7 @@ def build_matrices():
     It is only run once to avoid recomputing the matrices every time the program is run.
     """
     # Read the training data
-    filepath = "dataset/train.col"
+    filepath = "/mount/studenten/team-lab-cl/pos/train.col"
     train_data = read_data_file(filepath)
 
     smothing_param = 0.0001  # Smoothing parameter to avoid zero probabilities
