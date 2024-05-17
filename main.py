@@ -15,12 +15,12 @@ def run_model():
     tag_index = np.load("tag_index.npy", allow_pickle=True).item()
 
     # Read the appropriate experiment file to get the gold standard tags
-    filename = "dataset/test.col"
-    gold_standard_data = read_data_file(filename)
+    filepath = "dataset/test.col"
+    gold_standard_data = read_data_file(filepath)
     sentences, _, gold_standard_tags = extract_tokens_tags(gold_standard_data)
 
     all_predicted_tags = save_tagged_sentences(
-        filename,
+        filepath,
         sentences,
         emission_matrix,
         tag_transition_matrix,
@@ -37,13 +37,13 @@ def run_model():
     # Print the results for all predicted tags
 
     with open("evaluation_results.txt", "a") as file:
-        if "test" in filename:
+        if "test" in filepath:
             file.write("Evaluation results for the test data:\n")
         else:
             file.write("Evaluation results for the dev data:\n")
-        file.write(f"Precision {precision}\n")
-        file.write(f"Recall: {recall}\n")
-        file.write(f"F1 Score: {f1_score}\n")
+        file.write(f"Precision {np.round(precision, 3)}\n")
+        file.write(f"Recall: {np.round(recall,3)}\n")
+        file.write(f"F1 Score: {np.round(f1_score,3)}\n")
         file.write("\n")
 
 

@@ -23,6 +23,8 @@ Computational Linguistics Team Laboratory Project on Part-Of-Speech Tagging.
 
 ## Project Setup
 
+> :warning: **IMPORTANT: Please adjust the file paths in the `main.py (Line 18)` and `matrices.py (Line 25)` files to the appropriate paths on your local machine before running the program.**
+
 1. Libraries Used:
    - Python (3.12.3)
    - Numpy (1.26.4)
