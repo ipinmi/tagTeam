@@ -9,10 +9,12 @@ def vocab2idx(data):
     data (list): A list of list of sentences.
 
     Returns:
-    vocab2idx (dict): A dictionary that maps each token to its index in the vocabulary.
+    vocab2idx (dict): A sorted dictionary that maps each token to its index in the vocabulary.
     """
 
     vocab = list(set(token for sentence in data for token, _ in sentence))
+
+    # Add the unknown token to the vocabulary for out-of-vocabulary words
     vocab.append("<unk>")
     sorted_vocab = sorted(vocab)
 
@@ -29,7 +31,7 @@ def calculate_emission_probabilities(data, vocab, smoothing_param=0.0001):
     smoothing_param (float): A smoothing parameter (default value is 0.0001) to avoid zero probabilities.
 
     Returns:
-    emission_matrix (dict): The emission matrix containing the probability of each observation given the tags.
+    emission_matrix (dict): The sorted emission matrix containing the probability of each observation given the tags.
     """
 
     # Initialize dictionaries to store word-tag counts and tag counts
@@ -89,7 +91,7 @@ def calculate_emission_probabilities(data, vocab, smoothing_param=0.0001):
 
 def create_emission_matrix(emission_probabilities):
     """
-    Create the emission matrix containing the probability of each observation given the tags.
+    Create the emission matrix from the dictionary containing the probability of each observation given the tags.
 
     Parameters:
     emission_probabilities (dict): A dictionary containing the emission probabilities for each tag.

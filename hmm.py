@@ -130,15 +130,13 @@ def viterbi_backward(path_prob_matrix, viterbi_path_matrix, input_sequence, tag_
     Returns:
         best_path_tag: list
             the tag index for the most likely path.
-        input_and_pred: list
-            a list of lists that contaisn the input sequence and its predicted tags
     """
 
     num_obvs = len(input_sequence)
 
     # initialize the best path pointer
     best_path_pointer = np.empty(num_obvs, "B")
-    # get the best path for the last observation
+    # get the best path for the last observation (the final state in the state graph)
     best_path_pointer[-1] = np.argmax(path_prob_matrix[:, num_obvs - 1])
 
     # backtrack to get the best path for the remaining observations

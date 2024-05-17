@@ -24,9 +24,12 @@ class Evaluation:
         Creates a list equal to the number of tags and records the appropriate counts for the tags.
 
         Parameters:
-            dict_mapping (Dict) :
-            source (list) :
-            target (list) :
+            dict_mapping (Dict) : A dictionary mapping the tags to their respective indices.
+            source (list) : A list containing the tags to be counted.
+            length (int) : The number of tags to be counted.
+
+        Returns:
+            target (list) : A list containing the counts for each tag.
         """
         target = [0] * length
         for _, label_index in dict_mapping.items():
@@ -35,7 +38,12 @@ class Evaluation:
         return target
 
     def multiclass_confusion_matrix(self):
+        """
+        Calculates the confusion matrix for multiclass classification.
 
+        Returns:
+            np.array : A numpy array representing the confusion matrix based on the predicted and expected values.
+        """
         # Replace the tags with the appropriate indices, defaulting to the original list if no mapping found.
         y_pred_mapped = [*map(self._indices.get, self.predicted, self.predicted)]
         y_true_mapped = [*map(self._indices.get, self.expected, self.expected)]

@@ -39,7 +39,11 @@ def save_tagged_sentences(
     filename, sentences, emission_matrix, tag_transition_matrix, tag_index, vocab_index
 ):
     """
-    Predict tags for each sentence in the dataset and save the predictions to a file."""
+    Collect the predicted tags over the entire dataset and save the predictions to a file.
+
+    Returns:
+        all_predicted_tags (list): A merged list of all predicted tags for the dataset.
+    """
 
     # Create lists to store predicted tags for each sentence
     all_predicted_tags = []
