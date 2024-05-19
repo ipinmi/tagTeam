@@ -34,6 +34,9 @@ pip install numpy
 python3 main.py
 ```
 
+> - The predictions for the test and dev data will be saved in the **test_predictions.txt** and **dev_predictions.txt** file respectively
+> - The evaluation results are stored in the **evaluation_results.txt** file.
+
 1. Libraries Used:
    - Python (3.12.3)
    - Numpy (1.26.4)
@@ -50,5 +53,6 @@ python3 main.py
    - main.py: Executing the HMM POS tagger and evaluateing its performance
 4. Run the following command to execute the program and get the evaluation results as well as the predictions for the appropriate data:
    `python3 main.py`
+5. **The predictions for the test and dev data will be saved in the `test_predictions.txt` and `dev_predictions.txt` file respectively, and the evaluation results are stored in the `evaluation_results.txt` file.**
 
 <img src="assets/team_lab_project_structure.png" alt="image" height="500" width="600" >
