@@ -1,5 +1,5 @@
 from data import read_data_file
-from transition import *
+from baseline_hmm.transition import *
 from emission import *
 import numpy as np
 
