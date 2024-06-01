@@ -1,5 +1,5 @@
 import numpy as np
-from data import read_data_file, extract_tokens_tags
+from data import read_data_file, extract_tokens_tags, tag_distribution
 from matrices import build_matrices
 from pred_eval import *
 from evaluation import Evaluation
@@ -28,19 +28,25 @@ def run_model():
         vocab_index,
     )
 
+    # get the distribution of the predicted and gold standard tag sequences
+    prediction_distribution = tag_distribution(all_predicted_tags)
+    gold_standard_distribution = tag_distribution(gold_standard_tags)
+
     # Evaluate the predicted tags against the gold standard tags
     evaluator = Evaluation(all_predicted_tags, gold_standard_tags)
 
     # Calculate precision, recall, and F1 score for all predicted tags
     precision, recall, f1_score = evaluator.precision_recall_fScore()
 
-    # Print the results for all predicted tags
-
+    # Save the results for all predicted tags
     with open("evaluation_results.txt", "a") as file:
         if "test" in filepath:
             file.write("Evaluation results for the test data:\n")
         else:
             file.write("Evaluation results for the dev data:\n")
+
+        file.write(f"Gold Standard Tags Distribution: {gold_standard_distribution}\n")
+        file.write(f"Predicted Tags Distribution: {prediction_distribution}\n")
         file.write(f"Precision {np.round(precision, 3)}\n")
         file.write(f"Recall: {np.round(recall,3)}\n")
         file.write(f"F1 Score: {np.round(f1_score,3)}\n")
