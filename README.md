@@ -25,7 +25,7 @@
 - English (10 epochs): **0.9176**
 - Mandarin (10 epochs): **0.7900**
 
-> **IMPORTANT: Please adjust the file paths in `BERTtagger.py (Lines 30-32, 35-37, 40-42)`, the language choice for BERT taggers in the `BERTtagger.py (Line 417)`, pretrained model paths in `TL_Afrikaan.py (Lines 209-211)` and finetune file paths in `TL_Afrikaan.py (Lines 26-28)`  to the appropriate paths on your local machine before running the program. Also, tune the hyperparameters in `BERTtagger.py (Lines 21-24)` and in `TL_Afrikaan.py (Lines 21-24)`**
+> **IMPORTANT: Please adjust the file paths in `BERTtagger.py (Lines 30-32, 35-37, 40-42)` and `TL_Afrikaan.py (Lines 26-28)`, the language choice for BERT taggers in the `BERTtagger.py (Line 417)` and `TL_Afrikaan.py (Line 31)`, and pretrained model paths in `TL_Afrikaan.py (Lines 34, 36, 38)` to the appropriate paths on your local machine before running the program. Also, tune the hyperparameters in `BERTtagger.py (Lines 21-24)` and in `TL_Afrikaan.py (Lines 21-24)`**
 
 ```python
 python3 -m venv team_lab
