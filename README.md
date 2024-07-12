@@ -25,7 +25,7 @@
 - English (10 epochs): **0.9176**
 - Mandarin (10 epochs): **0.7900**
 
-> **IMPORTANT: Please adjust the file paths in `BERTtagger.py (Lines 31-33, 36-38, 41-43)`, the language choice for BERT taggers in the `BERTtagger.py (Line 301)`, pretrained model paths in `TL_Afrikaan.py (Lines 209-211)` and finetune file paths in `TL_Afrikaan.py (Lines 26-28)`  to the appropriate paths on your local machine before running the program. Also, tune the hyperparameters in `BERTtagger.py (Lines 22-25)` and in `TL_Afrikaan.py (Lines 21-24)`**
+> **IMPORTANT: Please adjust the file paths in `BERTtagger.py (Lines 30-32, 35-37, 40-42)`, the language choice for BERT taggers in the `BERTtagger.py (Line 417)`, pretrained model paths in `TL_Afrikaan.py (Lines 209-211)` and finetune file paths in `TL_Afrikaan.py (Lines 26-28)`  to the appropriate paths on your local machine before running the program. Also, tune the hyperparameters in `BERTtagger.py (Lines 21-24)` and in `TL_Afrikaan.py (Lines 21-24)`**
 
 ```python
 python3 -m venv team_lab
@@ -34,7 +34,7 @@ source team_lab/bin/activate
 * requirements.txt
 
 # How to run the program and generates the evaluation results and predictions
-Simply run the two py files.
+For TL_Afrikaan.py, simply run the file. For BERTtagger.py, choose the language in line 417 and run the file.
 ```
 
 > - The evaluation results are stored in the **evaluation_results.txt** file.
