@@ -38,7 +38,8 @@ source team_lab/bin/activate
 For TL_Afrikaan.py, simply run the file. For BERTtagger.py, choose the language in line 417 and run the file.
 ```
 
-> - The evaluation results are stored in the **evaluation_results.txt** file.
+> - The evaluation results for BERT taggers are stored in the **results_BERTtagger.txt** file.
+> - The evaluation results for Transfer learning are stored in the **results_TL.txt** file.
 
 1. Overview:
    This project extension implements three BERT POS taggers in three languages: German, English, and Mandarin. Then the three BERT POS tagger models are saved as pretrained models later used in the transfer learning fine tuned on Afrikaan datasets.
