@@ -5,9 +5,7 @@ import numpy as np
 import random
 import functools
 import time
-import os
 import matplotlib.pyplot as plt
-
 from transformers import BertTokenizer, BertModel
 from torchtext.data import Field, Example, Dataset, BucketIterator
 from sklearn.metrics import f1_score
@@ -20,68 +18,98 @@ torch.manual_seed(SEED)
 torch.backends.cudnn.deterministic = True
 
 # Hyperparameters
-BATCH_SIZE = 32
+BATCH_SIZE = 8
 LEARNING_RATE = 5e-5
-N_EPOCHS = 10
-DROPOUT = 0.25
-MODEL_SAVE_PATH = 'bert-pos-tagger-model.pt'
-TRAIN_DATA_PATH = 'C:/tagTeam/de_gsd-ud-train.txt'
-VALID_DATA_PATH = 'C:/tagTeam/de_gsd-ud-dev.txt'
-TEST_DATA_PATH = 'C:/tagTeam/de_gsd-ud-test.txt'
+N_EPOCHS = 3
+DROPOUT = 0.15
+MODEL_SAVE_PATH_TEMPLATE = 'bert-pos-tagger-model-{}.pt'
 
-# Load BERT tokenizer for German language
-tokenizer = BertTokenizer.from_pretrained('bert-base-german-cased')
+# Define paths to datasets
+DATA_PATHS = {
+    'mandarin': {
+        'train': 'C:/tagTeam/zh_gsd-ud-train.txt',
+        'valid': 'C:/tagTeam/zh_gsd-ud-dev.txt',
+        'test': 'C:/tagTeam/zh_gsd-ud-test.txt'
+    },
+    'english': {
+        'train': 'C:/tagTeam/en_gum-ud-train.txt',
+        'valid': 'C:/tagTeam/en_gum-ud-dev.txt',
+        'test': 'C:/tagTeam/en_gum-ud-test.txt'
+    },
+    'german': {
+        'train': 'C:/tagTeam/de_gsd-ud-train.txt',
+        'valid': 'C:/tagTeam/de_gsd-ud-dev.txt',
+        'test': 'C:/tagTeam/de_gsd-ud-test.txt'
+    },
+    'afrikaan': {
+        'train': 'C:/tagTeam/af_afribooms-ud-train.txt',
+        'valid': 'C:/tagTeam/af_afribooms-ud-dev.txt',
+        'test': 'C:/tagTeam/af_afribooms-ud-test.txt'
+    }
+}
 
-# Tokenizer special tokens
-init_token = tokenizer.cls_token
-pad_token = tokenizer.pad_token
-unk_token = tokenizer.unk_token
-
-init_token_idx = tokenizer.convert_tokens_to_ids(init_token)
-pad_token_idx = tokenizer.convert_tokens_to_ids(pad_token)
-unk_token_idx = tokenizer.convert_tokens_to_ids(unk_token)
-
-max_input_length = tokenizer.model_max_length
+# Define BERT models and tokenizers for each language
+BERT_MODELS = {
+    'mandarin': 'bert-base-chinese',
+    'english': 'bert-base-uncased',
+    'german': 'bert-base-german-cased',
+    'afrikaan': 'bert-base-multilingual-cased'
+}
 
 # Preprocessing functions
 def cut_and_convert_to_id(tokens, tokenizer, max_input_length):
+    """
+    Cut the tokens to the maximum input length and convert them to IDs using the tokenizer.
+    
+    Parameters:
+    tokens (list): List of tokens.
+    tokenizer (BertTokenizer): BERT tokenizer.
+    max_input_length (int): Maximum input length.
+    
+    Returns:
+    list: List of token IDs.
+    """
     tokens = tokens[:max_input_length-1]
     tokens = tokenizer.convert_tokens_to_ids(tokens)
     return tokens
 
 def cut_to_max_length(tokens, max_input_length):
+    """
+    Cut the tokens to the maximum input length.
+    
+    Parameters:
+    tokens (list): List of tokens.
+    max_input_length (int): Maximum input length.
+    
+    Returns:
+    list: List of cut tokens.
+    """
     tokens = tokens[:max_input_length-1]
     return tokens
 
-# Partial functions for preprocessing
-text_preprocessor = functools.partial(cut_and_convert_to_id,
-                                      tokenizer=tokenizer,
-                                      max_input_length=max_input_length)
-
-tag_preprocessor = functools.partial(cut_to_max_length,
-                                     max_input_length=max_input_length)
-
-# Define fields for text and tags
-TEXT = Field(use_vocab=False,
-             lower=False,
-             preprocessing=text_preprocessor,
-             init_token=init_token_idx,
-             pad_token=pad_token_idx,
-             unk_token=unk_token_idx)
-
-UD_TAGS = Field(unk_token=None,
-                init_token='<pad>',
-                preprocessing=tag_preprocessor)
-
-fields = [("text", TEXT), ("udtags", UD_TAGS)]
-
-# Custom dataset class to handle loading of data
-class CustomDataset(Dataset):
+class LoadDataset(Dataset):
     def __init__(self, path, fields, **kwargs):
+        """
+        Custom dataset class to handle loading of data.
+        
+        Parameters:
+        path (str): Path to the dataset file.
+        fields (list): List of fields.
+        """
         examples = self.load_data(path, fields)
         super().__init__(examples, fields, **kwargs)
 
     def load_data(self, path, fields):
+        """
+        Load data from the dataset file.
+        
+        Parameters:
+        path (str): Path to the dataset file.
+        fields (list): List of fields.
+        
+        Returns:
+        list: List of examples.
+        """
         examples = []
         with open(path, 'r', encoding='utf-8') as f:
             words, tags = [], []
@@ -100,31 +128,16 @@ class CustomDataset(Dataset):
                 examples.append(Example.fromlist([words, tags], fields))
         return examples
 
-# Load the data
-train_data = CustomDataset(TRAIN_DATA_PATH, fields)
-valid_data = CustomDataset(VALID_DATA_PATH, fields)
-test_data = CustomDataset(TEST_DATA_PATH, fields)
-
-# Build vocabulary for tags
-UD_TAGS.build_vocab(train_data)
-
-# Define device
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-
-# Define sort key
-def sort_key(ex):
-    return len(ex.text)
-
-# Create iterators for the datasets
-train_iterator, valid_iterator, test_iterator = BucketIterator.splits(
-    (train_data, valid_data, test_data), 
-    batch_size=BATCH_SIZE,
-    device=device,
-    sort_key=sort_key)
-
-# Define the model
 class BERTPoSTagger(nn.Module):
     def __init__(self, bert, output_dim, dropout):
+        """
+        Define the BERT-based POS tagger model.
+        
+        Parameters:
+        bert (BertModel): Pre-trained BERT model.
+        output_dim (int): Output dimension.
+        dropout (float): Dropout rate.
+        """
         super().__init__()
         self.bert = bert
         embedding_dim = bert.config.to_dict()['hidden_size']
@@ -132,6 +145,16 @@ class BERTPoSTagger(nn.Module):
         self.dropout = nn.Dropout(dropout)
         
     def forward(self, text, attention_mask):
+        """
+        Forward pass of the model.
+        
+        Parameters:
+        text (torch.Tensor): Input text tensor.
+        attention_mask (torch.Tensor): Attention mask tensor.
+        
+        Returns:
+        torch.Tensor: Output predictions.
+        """
         text = text.permute(1, 0)
         attention_mask = attention_mask.permute(1, 0)
         embedded = self.dropout(self.bert(text, attention_mask=attention_mask)[0])
@@ -139,31 +162,41 @@ class BERTPoSTagger(nn.Module):
         predictions = self.fc(self.dropout(embedded))
         return predictions
 
-# Load pre-trained BERT model for German language
-bert = BertModel.from_pretrained('bert-base-german-cased')
-
-# Define model, optimizer, and loss function
-OUTPUT_DIM = len(UD_TAGS.vocab)
-model = BERTPoSTagger(bert, OUTPUT_DIM, DROPOUT)
-
-optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)
-TAG_PAD_IDX = UD_TAGS.vocab.stoi[UD_TAGS.pad_token]
-criterion = nn.CrossEntropyLoss(ignore_index=TAG_PAD_IDX)
-
-# Move model and loss function to the device
-model = model.to(device)
-criterion = criterion.to(device)
-
-# Helper function to calculate F1 score
 def calculate_f1(preds, y, tag_pad_idx):
+    """
+    Calculate the F1 score.
+    
+    Parameters:
+    preds (torch.Tensor): Predictions.
+    y (torch.Tensor): Ground truth labels.
+    tag_pad_idx (int): Padding index for tags.
+    
+    Returns:
+    float: F1 score.
+    """
     max_preds = preds.argmax(dim=1, keepdim=True)
     non_pad_elements = (y != tag_pad_idx).nonzero(as_tuple=True)
     y_pred = max_preds[non_pad_elements].squeeze(1).cpu().numpy()
     y_true = y[non_pad_elements].cpu().numpy()
     return f1_score(y_true, y_pred, average='weighted')
 
-# Training function
-def train(model, iterator, optimizer, criterion, tag_pad_idx, print_every=10):
+def train(model, iterator, optimizer, criterion, tag_pad_idx, pad_token_idx, print_every=10):
+    """
+    Train the model for one epoch.
+    
+    Parameters:
+    model (nn.Module): The model to train.
+    iterator (BucketIterator): Data iterator.
+    optimizer (torch.optim.Optimizer): Optimizer.
+    criterion (nn.Module): Loss function.
+    tag_pad_idx (int): Padding index for tags.
+    pad_token_idx (int): Padding index for tokens.
+    print_every (int): Print progress every specified number of batches.
+    
+    Returns:
+    float: Average loss for the epoch.
+    float: Average F1 score for the epoch.
+    """
     epoch_loss = 0
     epoch_f1 = 0
     model.train()
@@ -187,7 +220,21 @@ def train(model, iterator, optimizer, criterion, tag_pad_idx, print_every=10):
     
     return epoch_loss / len(iterator), epoch_f1 / len(iterator)
 
-def evaluate(model, iterator, criterion, tag_pad_idx):
+def evaluate(model, iterator, criterion, tag_pad_idx, pad_token_idx):
+    """
+    Evaluate the model.
+    
+    Parameters:
+    model (nn.Module): The model to evaluate.
+    iterator (BucketIterator): Data iterator.
+    criterion (nn.Module): Loss function.
+    tag_pad_idx (int): Padding index for tags.
+    pad_token_idx (int): Padding index for tokens.
+    
+    Returns:
+    float: Average loss.
+    float: Average F1 score.
+    """
     epoch_loss = 0
     epoch_f1 = 0
     model.eval()
@@ -205,49 +252,173 @@ def evaluate(model, iterator, criterion, tag_pad_idx):
             epoch_f1 += f1
     return epoch_loss / len(iterator), epoch_f1 / len(iterator)
 
-# Helper function to calculate elapsed time
 def epoch_time(start_time, end_time):
+    """
+    Calculate elapsed time in minutes and seconds.
+    
+    Parameters:
+    start_time (float): Start time.
+    end_time (float): End time.
+    
+    Returns:
+    int: Elapsed minutes.
+    int: Elapsed seconds.
+    """
     elapsed_time = end_time - start_time
     elapsed_mins = int(elapsed_time / 60)
     elapsed_secs = int(elapsed_time - (elapsed_mins * 60))
     return elapsed_mins, elapsed_secs
 
-best_valid_loss = float('inf')
-train_losses, valid_losses = [], []
-train_f1s, valid_f1s = [], []
+def write_final_f1_to_file(file_path, language, final_f1, test_f1):
+    """
+    Write final F1 score to a text file.
+    
+    Parameters:
+    file_path (str): File path to write the scores.
+    language (str): Language of the model.
+    final_f1 (float): Final validation F1 score.
+    test_f1 (float): Test F1 score.
+    """
+    with open(file_path, 'a') as f:
+        f.write(f'Language: {language}\n')
+        f.write(f'Final Validation F1 Score: {final_f1:.4f}\n')
+        f.write(f'Test F1 Score: {test_f1:.4f}\n\n')
 
-for epoch in range(N_EPOCHS):
-    start_time = time.time()
-    train_loss, train_f1 = train(model, train_iterator, optimizer, criterion, TAG_PAD_IDX, print_every=10)
-    valid_loss, valid_f1 = evaluate(model, valid_iterator, criterion, TAG_PAD_IDX)
-    end_time = time.time()
-    epoch_mins, epoch_secs = epoch_time(start_time, end_time)
+def main(language):
+    """
+    Train and evaluate the model for a given language.
     
-    if valid_loss < best_valid_loss:
-        best_valid_loss = valid_loss
-        torch.save(model.state_dict(), MODEL_SAVE_PATH)
-    
-    train_losses.append(train_loss)
-    valid_losses.append(valid_loss)
-    train_f1s.append(train_f1)
-    valid_f1s.append(valid_f1)
-    
-    print(f'Epoch: {epoch+1:02} | Epoch Time: {epoch_mins}m {epoch_secs}s')
-    print(f'\tTrain Loss: {train_loss:.3f} | Train F1: {train_f1:.2f}')
-    print(f'\t Val. Loss: {valid_loss:.3f} |  Val. F1: {valid_f1:.2f}')
+    Parameters:
+    language (str): Language to train and evaluate the model.
+    """
+    assert language in BERT_MODELS, f"Unsupported language: {language}"
 
-# Plotting loss and F1 score
-plt.figure(figsize=(10, 5))
-plt.subplot(1, 2, 1)
-plt.plot(train_losses, label='Train Loss')
-plt.plot(valid_losses, label='Valid Loss')
-plt.xlabel('Epochs')
-plt.ylabel('Loss')
-plt.legend()
-plt.subplot(1, 2, 2)
-plt.plot(train_f1s, label='Train F1 Score')
-plt.plot(valid_f1s, label='Valid F1 Score')
-plt.xlabel('Epochs')
-plt.ylabel('F1 Score')
-plt.legend()
-plt.show()
+    tokenizer = BertTokenizer.from_pretrained(BERT_MODELS[language])
+
+    init_token = tokenizer.cls_token
+    pad_token = tokenizer.pad_token
+    unk_token = tokenizer.unk_token
+
+    init_token_idx = tokenizer.convert_tokens_to_ids(init_token)
+    pad_token_idx = tokenizer.convert_tokens_to_ids(pad_token)
+    unk_token_idx = tokenizer.convert_tokens_to_ids(unk_token)
+
+    max_input_length = tokenizer.model_max_length
+
+    text_preprocessor = functools.partial(cut_and_convert_to_id,
+                                          tokenizer=tokenizer,
+                                          max_input_length=max_input_length)
+
+    tag_preprocessor = functools.partial(cut_to_max_length,
+                                         max_input_length=max_input_length)
+
+    TEXT = Field(use_vocab=False,
+                 lower=False,
+                 preprocessing=text_preprocessor,
+                 init_token=init_token_idx,
+                 pad_token=pad_token_idx,
+                 unk_token=unk_token_idx)
+
+    UD_TAGS = Field(unk_token=None,
+                    init_token='<pad>',
+                    preprocessing=tag_preprocessor)
+
+    fields = [("text", TEXT), ("udtags", UD_TAGS)]
+
+    data_paths = DATA_PATHS[language]
+    train_data = LoadDataset(data_paths['train'], fields)
+    valid_data = LoadDataset(data_paths['valid'], fields)
+    test_data = LoadDataset(data_paths['test'], fields)
+
+    UD_TAGS.build_vocab(train_data)
+
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+    def sort_key(ex):
+        return len(ex.text)
+
+    train_iterator, valid_iterator, test_iterator = BucketIterator.splits(
+        (train_data, valid_data, test_data),
+        batch_size=BATCH_SIZE,
+        device=device,
+        sort_key=sort_key)
+
+    bert = BertModel.from_pretrained(BERT_MODELS[language])
+
+    OUTPUT_DIM = len(UD_TAGS.vocab)
+    model = BERTPoSTagger(bert, OUTPUT_DIM, DROPOUT)
+
+    optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)
+    TAG_PAD_IDX = UD_TAGS.vocab.stoi[UD_TAGS.pad_token]
+    criterion = nn.CrossEntropyLoss(ignore_index=TAG_PAD_IDX)
+
+    model = model.to(device)
+    criterion = criterion.to(device)
+
+    best_valid_loss = float('inf')
+    train_losses, valid_losses, test_losses = [], [], []
+    train_f1s, valid_f1s, test_f1s = [], [], []
+
+    f1_results_file = 'final_f1_scores.txt'
+
+    for epoch in range(N_EPOCHS):
+        start_time = time.time()
+
+        train_loss, train_f1 = train(model, train_iterator, optimizer, criterion, TAG_PAD_IDX, pad_token_idx)
+        valid_loss, valid_f1 = evaluate(model, valid_iterator, criterion, TAG_PAD_IDX, pad_token_idx)
+        test_loss, test_f1 = evaluate(model, test_iterator, criterion, TAG_PAD_IDX, pad_token_idx)
+
+        train_losses.append(train_loss)
+        valid_losses.append(valid_loss)
+        test_losses.append(test_loss)
+        train_f1s.append(train_f1)
+        valid_f1s.append(valid_f1)
+        test_f1s.append(test_f1)
+
+        end_time = time.time()
+        epoch_mins, epoch_secs = epoch_time(start_time, end_time)
+
+        if valid_loss < best_valid_loss:
+            best_valid_loss = valid_loss
+            torch.save(model.state_dict(), MODEL_SAVE_PATH_TEMPLATE.format(language))
+
+        print(f'Epoch: {epoch+1:02} | Epoch Time: {epoch_mins}m {epoch_secs}s')
+        print(f'\tTrain Loss: {train_loss:.3f} | Train F1: {train_f1:.2f}')
+        print(f'\tValid Loss: {valid_loss:.3f} | Valid F1: {valid_f1:.2f}')
+        print(f'\tTest Loss: {test_loss:.3f} | Test F1: {test_f1:.2f}')
+    
+    final_f1 = valid_f1s[-1]
+    write_final_f1_to_file(f1_results_file, language, final_f1, test_f1)
+
+    epochs = range(1, N_EPOCHS + 1)
+    plt.figure(figsize=(18, 6))
+
+    plt.subplot(1, 3, 1)
+    plt.plot(epochs, train_losses, label='Train Loss')
+    plt.plot(epochs, valid_losses, label='Validation Loss')
+    plt.plot(epochs, test_losses, label='Test Loss')
+    plt.title('Losses')
+    plt.legend()
+
+    plt.subplot(1, 3, 2)
+    plt.plot(epochs, train_f1s, label='Train F1')
+    plt.plot(epochs, valid_f1s, label='Validation F1')
+    plt.plot(epochs, test_f1s, label='Test F1')
+    plt.title('F1 Scores')
+    plt.legend()
+
+    plt.subplot(1, 3, 3)
+    plt.plot(epochs, train_losses, label='Train Loss')
+    plt.plot(epochs, valid_losses, label='Validation Loss')
+    plt.plot(epochs, test_losses, label='Test Loss')
+    plt.plot(epochs, train_f1s, label='Train F1')
+    plt.plot(epochs, valid_f1s, label='Validation F1')
+    plt.plot(epochs, test_f1s, label='Test F1')
+    plt.title('Losses and F1 Scores')
+    plt.legend()
+
+    plt.show()
+
+# Select the language for training
+language = 'afrikaan'  # Choose from 'mandarin', 'english', 'german', 'afrikaan'
+main(language)
