@@ -14,16 +14,16 @@
 
 ## Transfer Learning
 
+Using pretrained POS taggers of three languages: German, English, and Mandarin, and finetuning on Afrikaan datasets.
 - [x] Afrikaan
 
 
-## Evaluation Results
+## Evaluation Results (F1 score) for the dev data pretrained on different languages:
 
-**Evaluation results (F1 score) for the dev data pretrained on different languages:**
+- German (3 epochs): dev: **0.84** ; test: **0.85**
+- English (6 epochs): dev: **0.84** ; test: **0.86**
+- Mandarin (6 epochs): dev: **0.85** ; test: **0.86**
 
-- German (10 epochs): **0.9388**
-- English (10 epochs): **0.9176**
-- Mandarin (10 epochs): **0.7900**
 
 > **IMPORTANT: Please adjust the file paths in `BERTtagger.py (Lines 30-32, 35-37, 40-42)` and `TL_Afrikaan.py (Lines 26-28)`, the language choice for BERT taggers in the `BERTtagger.py (Line 417)` and `TL_Afrikaan.py (Line 31)`, and pretrained model paths in `TL_Afrikaan.py (Lines 34, 36, 38)` to the appropriate paths on your local machine before running the program. Also, tune the hyperparameters in `BERTtagger.py (Lines 21-24)` and in `TL_Afrikaan.py (Lines 21-24)`**
 
