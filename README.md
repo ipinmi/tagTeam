@@ -6,11 +6,11 @@
 
 ## Evaluation Results
 
-**Evaluation results (F1 score) for the dev data:**
+**Evaluation results (F1 score) for the dev and test data:**
 
-- German (3 epochs): **0.9388**
+- German (3 epochs): **0.9388** 
 - English (10 epochs): **0.9176**
-- Mandarin (10 epochs): **0.7900**
+- Mandarin (10 epochs): **0.7900** **0.7957**
 
 ## Transfer Learning
 
