@@ -10,7 +10,7 @@
 
 - German (3 epochs): **0.9388** 
 - English (10 epochs): **0.9176**
-- Mandarin (10 epochs): **0.7900** **0.7957**
+- Mandarin (10 epochs): **0.7900** ; **0.7957**
 
 ## Transfer Learning
 
