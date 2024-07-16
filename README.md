@@ -29,10 +29,10 @@ Using pretrained POS taggers of three languages: German, English, and Mandarin, 
 > **IMPORTANT: Please adjust the file paths in `BERTtagger.py (Lines 30-32, 35-37, 40-42, 45-47)` and `TL_Afrikaan.py (Lines 26-28)`, the language choice for BERT taggers in the `BERTtagger.py (Line 417)` and `TL_Afrikaan.py (Line 31)`, and pretrained model paths in `TL_Afrikaan.py (Lines 34, 36, 38)` to the appropriate paths on your local machine before running the program. Also, tune the hyperparameters in `BERTtagger.py (Lines 21-24)` and in `TL_Afrikaan.py (Lines 21-24)`**
 
 ```python
-python3 -m venv team_lab
-source team_lab/bin/activate
+python3 -m venv transformers
+source transformers/bin/activate
 
-* requirements.txt
+pip install -r requirements.txt
 
 # How to run the program and generates the evaluation results and predictions
 For TL_Afrikaan.py, simply run the file. For BERTtagger.py, choose the language in line 417 and run the file.
