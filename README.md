@@ -9,10 +9,10 @@
 
 **Evaluation results (F1 score) for the dev and test data:**
 
-- German: **0.9388** ; **0.9200**
-- English: **0.9176** ; **0.9175**
-- Mandarin: **0.7900** ; **0.7957**
-- Afrikaan: **0.8825** ; **0.8999**
+- German: dev = **0.9388** ; test = **0.9200**
+- English: dev = **0.9176** ; test = **0.9175**
+- Mandarin: dev = **0.7900** ; test = **0.7957**
+- Afrikaan: dev = **0.8825** ; test = **0.8999**
 
 ## Transfer Learning
 
@@ -22,9 +22,9 @@ Using pretrained POS taggers of three languages: German, English, and Mandarin, 
 
 ## Evaluation Results (F1 score) for the dev data pretrained on different languages:
 
-- German: dev: **0.8407** ; test: **0.8525**
-- English: dev: **0.8396** ; test: **0.8585**
-- Mandarin: dev: **0.8520** ; test: **0.8600**
+- German: dev = **0.8407** ; test = **0.8525**
+- English: dev = **0.8396** ; test = **0.8585**
+- Mandarin: dev = **0.8520** ; test = **0.8600**
 
 ## Project Setup
 
