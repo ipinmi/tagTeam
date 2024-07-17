@@ -18,7 +18,7 @@ Using pretrained POS taggers of three languages: German, English, and Mandarin, 
 - [x] Afrikaan
 
 
-**Evaluation Results (F1 score) for the dev data pretrained on different languages:**
+**Evaluation Results (F1 score) for the dev and test data pretrained on different languages:**
 
 - German: dev = **0.8407** ; test = **0.8525**
 - English: dev = **0.8396** ; test = **0.8585**
