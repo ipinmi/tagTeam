@@ -3,14 +3,16 @@
 - [x] German
 - [x] English
 - [x] Mandarin
+- [x] Afrikaan
 
-## Evaluation Results
+## Evaluation Results for BERT taggers
 
 **Evaluation results (F1 score) for the dev and test data:**
 
-- German (3 epochs): **0.9388** 
-- English (10 epochs): **0.9176**
-- Mandarin (10 epochs): **0.7900** ; **0.7957**
+- German: **0.9388** ; **0.9200**
+- English: **0.9176** ; **0.9175**
+- Mandarin: **0.7900** ; **0.7957**
+- Afrikaan: **0.8825** ; **0.8999**
 
 ## Transfer Learning
 
@@ -20,9 +22,9 @@ Using pretrained POS taggers of three languages: German, English, and Mandarin, 
 
 ## Evaluation Results (F1 score) for the dev data pretrained on different languages:
 
-- German (3 epochs): dev: **0.84** ; test: **0.85**
-- English (6 epochs): dev: **0.84** ; test: **0.86**
-- Mandarin (6 epochs): dev: **0.85** ; test: **0.86**
+- German: dev: **0.8407** ; test: **0.8525**
+- English: dev: **0.8396** ; test: **0.8585**
+- Mandarin: dev: **0.8520** ; test: **0.8600**
 
 ## Project Setup
 
