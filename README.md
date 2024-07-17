@@ -37,7 +37,7 @@ source transformers/bin/activate
 pip install -r requirements.txt
 
 # How to run the program and generates the evaluation results and predictions
-For TL_Afrikaan.py, simply run the file. For BERTtagger.py, choose the language in line 417 and run the file.
+For TL_Afrikaan.py, choose the language in line 33 and For BERTtagger.py, choose the language in line 419, and run the file.
 ```
 
 > - The evaluation results for BERT taggers are stored in the **results_BERTtagger.txt** file.
