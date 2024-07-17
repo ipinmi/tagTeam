@@ -5,8 +5,6 @@
 - [x] Mandarin
 - [x] Afrikaan
 
-## Evaluation Results for BERT taggers
-
 **Evaluation results (F1 score) for the dev and test data:**
 
 - German: dev = **0.9388** ; test = **0.9200**
@@ -20,7 +18,7 @@ Using pretrained POS taggers of three languages: German, English, and Mandarin, 
 - [x] Afrikaan
 
 
-## Evaluation Results (F1 score) for the dev data pretrained on different languages:
+**Evaluation Results (F1 score) for the dev data pretrained on different languages:**
 
 - German: dev = **0.8407** ; test = **0.8525**
 - English: dev = **0.8396** ; test = **0.8585**
