@@ -1,3 +1,4 @@
+# @Author: Chibundum Adebayo and Hao-En Hsu
 import numpy as np
 import random
 

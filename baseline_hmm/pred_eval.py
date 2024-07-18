@@ -1,3 +1,4 @@
+# @Author: Chibundum Adebayo
 from hmm import *
 
 

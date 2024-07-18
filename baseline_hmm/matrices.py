@@ -1,3 +1,4 @@
+# @Author: Chibundum Adebayo
 from data import read_data_file
 from baseline_hmm.transition import *
 from emission import *

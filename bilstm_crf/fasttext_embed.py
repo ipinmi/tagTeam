@@ -97,9 +97,6 @@ def main():
 
     subprocess.run(["rm", f"{embedding_dir}/cc.{lang_code}.300.bin"])
 
-    # Extract the pretrained weights and save to numpy file
-    # get_pretrained_matrix(embedding_dir, lang_code)
-
 
 if __name__ == "__main__":
     main()

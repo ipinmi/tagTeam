@@ -1,3 +1,4 @@
+# @Author: Chibundum Adebayo
 import numpy as np
 from data import read_data_file, extract_tokens_tags, tag_distribution
 from evaluation import Evaluation

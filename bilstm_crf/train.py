@@ -252,33 +252,6 @@ def train():
         torch.nn.utils.clip_grad_norm_(model.parameters(), model_params.clip)
         optimizer.step()
 
-        """
-        # Average the loss over the epoch
-        epoch_loss /= epoch_steps
-        if epoch_losses == []:
-            epoch_losses.append(epoch_loss)
-        epoch_losses.append(epoch_loss)"""
-
-        """# Evaluate F1 score on the train set
-        # model.eval()
-
-        # Train set F1 score
-        best_train_Fscore, epoch_train_Fscore, _ = evalution_with_f1_loss(
-            model, final_train_data, "train", best_train_Fscore
-        )
-
-        sys.stdout.flush()
-
-        train_f1_scores.append(epoch_train_Fscore)
-
-        # Continue training for the next epoch
-        model.train(True)
-
-        end_time = time.time()
-        epoch_mins, epoch_secs = epoch_time(start_time, end_time)
-        print(
-            f"Epoch: {epoch} | Time: {epoch_mins}m {epoch_secs}s | Train Loss: {epoch_loss:.4f} | Train F_1: {epoch_train_Fscore:.4f}"
-        )"""
     return epoch_loss, epoch_steps
 
 
@@ -478,14 +451,13 @@ if __name__ == "__main__":
         text_vocab_obj, char_vocab_obj, tag_vocab_obj, pretrained_weights_path
     )
 
-    """
     print(f"Copying pretrained weights of {lang_code} to numpy tensor")
 
     run_once(
         get_pretrained_matrix(
             model_params, text_vocab_obj, fasttext_model_path, pretrained_weights_path
         )
-    )"""
+    )
 
     final_train_data = train_dev_test.data["train"]["examples"]
     final_dev_data = train_dev_test.data["dev"]["examples"]

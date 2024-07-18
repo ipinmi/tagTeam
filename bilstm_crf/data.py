@@ -100,8 +100,6 @@ def get_pretrained_matrix(params, text_vocab_obj, model_path, save_path):
     Returns:
     weight_matrix_tensor (torch.Tensor): Tensor containing the pretrained weights
     """
-    # fasttext_model_path = f"{embedding_dir}/cc.{params.lang_code}.100.bin"
-    # save_path = f"{embedding_dir}/{params.lang_code}_pretrained_weights.pt"
 
     # Load the downloaded FastText model
     pretrained_model = fasttext.load_model(model_path)
