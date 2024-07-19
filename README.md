@@ -1,4 +1,6 @@
-# tagTeam
+#### @Author: Chibundum Adebayo
+
+# TagTeam
 
 Computational Linguistics Team Laboratory Project on Part-Of-Speech Tagging.
 
@@ -7,52 +9,64 @@ Computational Linguistics Team Laboratory Project on Part-Of-Speech Tagging.
 - [Chibundum Adebayo]
 - [Hao-En Hsu]
 
+## Project Setup for BiLSTM-CRF Model
+
+```python
+python3 -m venv lstm_crf
+source lstm_crf/bin/activate
+pip install -r requirements.txt
+```
+
+## Steps to collect the Universal Dependencies data and run the BiLSTM-CRF model
+
+### 1. Download and create the data files for the four languages (English, German, Chinese and Afrikaans), run the following command:
+
+```python
+# Language codes for the four languages: English (en), German (de), Chinese (zh), Afrikaans (af)
+python ud_conllu_convert.py --lang_code={language} --ud_data_dir=ud_pos_data
+```
+
+### 2. Download the embeddings for the four languages (English, German, Chinese and Afrikaans), run the following command:
+
+```python
+python fasttext_embed.py --lang_code={language}  --embedding_dir=embeddings
+```
+
+### 3. Set experimental hyperparameters for the BiLSTM-CRF model in the `model_params.py` file
+
+### 4. Train and save the BiLSTM-CRF model for the four languages (English, German, Chinese and Afrikaans) run the following command:
+
+```python
+python train.py --lang_code={language} --data_dir=ud_pos_data --embedding_dir=embeddings --model_path=model
+```
+
+## Evaluation Results for BiLSTM-CRF Model
+
+**Evaluation results for the Train,Test and dev data:**
+
+**Micro Averaging F1-Score:**
+
+|           | Train | Dev | Test |
+| --------- | ----- | --- | ---- |
+| German    |       |     |      |
+| English   |       |     |      |
+| Chinese   |       |     |      |
+| Afrikaans |       |     |      |
+
+**Negative Likelihood Loss:**
+| | Train | Dev | Test |
+| --------- | ----- | --- | ---- |
+| German | | | |
+| English | | | |
+| Chinese | | | |
+| Afrikaans | | | |
+
 ## Project Milestones
 
 - [x] Project Setup
 - [x] Evaluation implementation for POS tagging
 - [x] Baseline POS tagger algorithm **(Hidden Markov Model)**
-
-## Evaluation Results
-
-**Evaluation results for the Test and dev data:**
-
-- Smoothing Parameter Value: **0.0001**
-- Dev data F1 Score: **0.93**
-- Test data F1 Score: **0.94**
-
-## Project Setup
-
-> :warning: **IMPORTANT: Please adjust the file paths in the `main.py (Line 18)` and `matrices.py (Line 25)` files to the appropriate paths on your local machine before running the program.**
-
-```python
-python3 -m venv team_lab
-source team_lab/bin/activate
-pip install numpy
-
-# Run the program and it generates the evaluation results and predictions
-python3 main.py
-```
-
-> - The predictions for the test and dev data will be saved in the **test_predictions.txt** and **dev_predictions.txt** file respectively
-> - The evaluation results are stored in the **evaluation_results.txt** file.
-
-1. Libraries Used:
-   - Python (3.12.3)
-   - Numpy (1.26.4)
-2. Overview:
-   This project implements a Hidden Markov Model (HMM) based Part-of-Speech (POS) tagger, which assigns a POS tag to each word in a given input sentence. The model utilizes probabilistic approaches to determine the most likely sequence of POS tags based on observed words and transition probabilities between tags, which is decoded by Viterbi algorithm, a dynamic approach frequently used in POS tagging and NER recognition.
-3. Module Structure:
-   - data.py: Reading data files in the CoNLL format and extracting tokens and tags for evaluation purposes
-   - evaluation.py: Evaluating the performance of the POS tagger using metrics including precision, recall, and **micro averaging** F1-score
-   - tag_transition.py: computing the transition probabilities between POS tags
-   - emission.py: Constructing the emission matrix, which contains the probabilities of emitting each word from each POS tag
-   - matrices.py: Building transition and emission matrices from the training data and saving them to files
-   - hmm.py: Implementing the Viterbi algorithm for POS tagging using HMM.
-   - pred_eval.py: Predicting POS tags for sentences and evaluating the predicted tags against the gold standard tags
-   - main.py: Executing the HMM POS tagger and evaluateing its performance
-4. Run the following command to execute the program and get the evaluation results as well as the predictions for the appropriate data:
-   `python3 main.py`
-5. **The predictions for the test and dev data will be saved in the `test_predictions.txt` and `dev_predictions.txt` file respectively, and the evaluation results are stored in the `evaluation_results.txt` file.**
-
-<img src="assets/team_lab_project_structure.png" alt="image" height="500" width="600" >
+- [x] Comparison with Spacy POS tagger and dummy POS tagger
+- [x] Advanced approach with **BiLSTM-CRF** model
+- [x] Advanced approach with **Transformer** model and Transfer Learning
+- [x] Evaluation and comparison of the advanced models on four languages (English, German, Chinese and Afrikaans)
