@@ -18,6 +18,7 @@ class Char_Word_BiLSTM(nn.Module):
         self.char_hidden_dim = params.char_hidden_dim // 2
         self.word_hidden_dim = params.word_hidden_dim // 2
 
+        # Load the pretrained embeddings if True
         if params.use_pretrained:
             self.pretrained_word_embedding = torch.load(params.pretrained_emd_path)
 
@@ -71,7 +72,7 @@ class Char_Word_BiLSTM(nn.Module):
                 batch_first=True,
             )
 
-        # linear projection to tagset size
+        # Linear projection to tagset size
         self.hidden2tag = nn.Linear(self.word_hidden_dim * 2, params.tag_vocab_size)
         nn.init.xavier_normal_(self.hidden2tag.weight.data)
         nn.init.normal_(self.hidden2tag.bias.data)
@@ -110,6 +111,7 @@ class Char_Word_BiLSTM(nn.Module):
                 )
             ).to(self.device)
 
+            # Concatenate the last hidden state of forward and backward LSTM
             for i, index in enumerate(char_output_lens):
                 temp_char_lvl_features[i] = torch.cat(
                     (
@@ -119,6 +121,7 @@ class Char_Word_BiLSTM(nn.Module):
                 )
             char_lvl_features = temp_char_lvl_features.clone()
 
+            # Reorder the char_lvl_features to match the word sequence
             for i in range(char_lvl_features.size(0)):
                 char_lvl_features[char_recover[i]] = temp_char_lvl_features[i]
 
@@ -175,7 +178,7 @@ class POS_Tagger(nn.Module):
             input_seq, input_len, char_input_seq, char_input_len, char_recover
         )
         if self.crf:
-            batch_size = 1
+            batch_size = 1  # Set to 1 because we are processing one sentence at a time
             # To ensure that the dimensions are (seq_length, batch_size, tag_vocab_size)
             reshaped_output_features = output_features.view(
                 input_len, batch_size, self.tag_vocab_size

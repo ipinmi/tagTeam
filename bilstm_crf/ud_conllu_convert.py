@@ -33,12 +33,15 @@ def extract_pos_files(file_dir, extension="conllu"):
     """
     Extracts all the conllu files from the directory with their full path
 
-    Parameters
-
+    Parameters:
     directory: str
         The directory for each language UD data
     extension: str (default="conllu")
         The extension of the files to extract
+
+    Returns:
+    conllu_files: list
+        List of all conllu files in the directory
     """
     dir_files = os.listdir(file_dir)
 

@@ -67,9 +67,7 @@ def main():
     args = parser.parse_args()
 
     lang_code = args.lang_code
-    # data_dir = args.data_dir
     embedding_dir = args.embedding_dir
-    # model_path = args.model_path  # TODO: add model name to path
 
     # Download and load the FastText embeddings
 

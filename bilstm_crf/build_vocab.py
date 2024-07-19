@@ -8,18 +8,30 @@ from typing import List, Tuple
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
-####################################################################################################################################
-
-
 class Vocabulary(object):
     def __init__(self, pad_token="<pad>", unk_token="<unk>"):
         """
-        <pad> and <unk> tokens are set to index 0 and 1 in all vocabs
+        This class creates the vocabulary for a dataset. It maps tokens to indices and vice versa.
+        As well as, appending to the vocabulary dictionary.
+
+        Parameters:
+        pad_token (str): The padding token.
+        unk_token (str): The unknown token.
+
+        Methods:
+        token_to_idx: Maps a tag/token to an index.
+        idx_to_token: Maps an index to a tag/token.
+        unk_idx: Returns the index of the unknown token.
+        vocab_size: Returns the size of the vocabulary.
+        pad_idx: Returns the index of the padding token.
+        add_token_sequence: Adds a sequence of tokens to the vocabulary.
         """
         self.pad_token = pad_token
         self.unk_token = unk_token
+        # Initialize the token to index and index to token dictionaries with the pad and unk tokens.
         self.idx2token = [pad_token, unk_token]
         self.token2idx = defaultdict(lambda: self.idx2token.index(self.pad_token))
+        # Set the indices for the pad and unk tokens.
         self.token2idx[pad_token] = 0
         self.token2idx[unk_token] = 1
 
@@ -51,9 +63,17 @@ class Vocabulary(object):
                 self.idx2token.append(token)
 
 
-class TaggingDataset(object):
+class POS_Dataset(object):
     """
-    A class to hold data pairs of input words, characters, and target tags.
+    This class creates a dataset for a sequence tagging task. It reads the data and creates the vocabulary.
+
+    Methods:
+    read_dataset: Reads the input data and converts it to a tensor.
+    add_test_dev_set: Adds the test and dev sets to the dataset.
+    get_vocabulary: Returns the vocabulary for the specified vocabulary.
+    sentence_to_array: Converts a sentence to an array of integers.
+    array_to_sentence: Converts an array of integers to a sentence.
+    shuffle_train_data: Shuffles the training data.
     """
 
     def __init__(
@@ -62,6 +82,7 @@ class TaggingDataset(object):
         test_data: List[Tuple[List, List]],
         dev_data: List[Tuple[List, List]],
     ):
+        # Initialize the vocabularies using the Vocabulary class.
         self.word_vocab = Vocabulary()
         self.char_vocab = Vocabulary()
         self.tags_vocab = Vocabulary()
@@ -76,26 +97,40 @@ class TaggingDataset(object):
             "test": {},
         }
 
+        # Add the test and dev sets to the data dictionary.
         self.add_test_dev_set(test_data, "test")
         self.add_test_dev_set(dev_data, "dev")
 
     def read_dataset(
         self, input_data: List[Tuple[List, List]], add_to_vocabularies: bool
     ):
+        """
+        Convert the input data to a tensor and save the length of each example.
+        Also, creates the character level input tensor.
+
+        Parameters:
+        input_data (list): List of tuples of (input_list, target_list) for each sentence.
+        add_to_vocabularies (bool): Whether to add the tokens to the vocabularies based on the split.
+
+        Returns:
+        examples (list): List of dictionaries containing the word array, word length, char input list, and tag sequence array.
+        """
         # Convert each example to a tensor and save the length
         examples = []
         for input_list, target_list in input_data:
-            assert len(input_list) == len(target_list), "Invalid data example."
+            assert len(input_list) == len(
+                target_list
+            ), "Input and target lengths have to match"
 
-            # If false, do not add test words to the vocabularies.
+            # Set to false if adding test or dev set tokens to vocabulary.
             if add_to_vocabularies:
                 self.word_vocab.add_token_sequence(input_list)
                 self.tags_vocab.add_token_sequence(target_list)
 
-            # Convert the input sequence to an array of ints.
+            # Convert each word in the sentence into an integer.
             input_array = self.sentence_to_array(input_list, vocabulary="word")
 
-            # Convert each word in the sentence into a sequence of ints.
+            # Convert each word in the sentence into a list of integers per character.
             char_inputs = []
             for word in input_list:
                 char_list = list(word)
@@ -120,6 +155,14 @@ class TaggingDataset(object):
         data: List[Tuple[List, List]],
         split: str,
     ):
+        """
+        Create the test and dev sets and add them to the data dictionary.
+
+        Parameters:
+        data (list): List of tuples of (input_list, target_list) for each sentence.
+        split (str): The split to add the data to.
+
+        """
         if split == "test":
             test_examples = self.read_dataset(data, add_to_vocabularies=False)
             self.data["test"]["examples"] = test_examples
@@ -128,27 +171,32 @@ class TaggingDataset(object):
             dev_examples = self.read_dataset(data, add_to_vocabularies=False)
             self.data["dev"]["examples"] = dev_examples
 
-    def get_vocabulary(self, vocabulary: str) -> Vocabulary:
-        if vocabulary == "word":
+    def get_vocabulary(self, vocab_name: str) -> Vocabulary:
+        """
+        Get the vocabulary based on the specified vocabulary.
+        """
+        if vocab_name == "word":
             vocab = self.word_vocab
-        elif vocabulary == "char":
+        elif vocab_name == "char":
             vocab = self.char_vocab
-        elif vocabulary == "tags":
+        elif vocab_name == "tags":
             vocab = self.tags_vocab
         else:
             raise ValueError(
-                "Specified unknown vocabulary in sentence_to_array: {}".format(
-                    vocabulary
-                )
+                "The given vocabulary name does not exist: {}".format(vocab_name)
             )
         return vocab
 
     def sentence_to_array(self, sentence: List[str], vocabulary: str) -> List[int]:
         """
-        Convert each str word in a sentence to an integer from the vocabulary.
-        :param sentence: the sentence in words (strings).
-        :param vocabulary: whether to use the input or target vocabulary.
-        :return: the sentence in integers.
+        Map each word in a sentence to an integer based on the vocabulary.
+
+        Parameters:
+        sentence (list): List of words.
+        vocabulary (str): The vocabulary to use.
+
+        Returns:
+        sentence_array (list): List of integers representing the words from the vocabulary.
         """
         vocab = self.get_vocabulary(vocabulary)
         sentence_array = []
@@ -156,33 +204,18 @@ class TaggingDataset(object):
             sentence_array.append(vocab.token_to_idx(word))
         return sentence_array
 
-    def get_example(self, idx: int, split="train"):
-        if idx >= len(self.data[split]["examples"]):
-            raise ValueError(
-                "Dataset has no example at idx %d for split %s" % (idx, split)
-            )
-        word_tensor = self.array_to_sentence(
-            self.data[split]["examples"][idx]["word_tensor"], "word"
-        )
-
-        # Convert each word in the sentence into an array of integers per char.
-        char_inputs = [
-            self.array_to_sentence(char_input, "char")
-            for char_input in self.data[split]["examples"][idx]["char_input_tensor"]
-        ]
-        tag_seq_tensor = self.array_to_sentence(
-            self.data[split]["examples"][idx]["tag_seq_tensor"], "tags"
-        )
-        return word_tensor, char_inputs, tag_seq_tensor
-
     def array_to_sentence(
         self, sentence_array: List[int], vocabulary: str
     ) -> List[str]:
         """
-        Translate each integer in a sentence array to the corresponding word.
-        :param sentence_array: array with integers representing words from the vocabulary.
-        :param vocabulary: whether to use the input or target vocabulary.
-        :return: the sentence in words.
+        Maps each integer in a sentence array to a word based on the vocabulary.
+
+        Parameters:
+        sentence_array (list): List of integers representing the words.
+        vocabulary (str): The vocabulary to use.
+
+        Returns:
+        sentence (list): List of words from the vocabulary.
         """
         vocab = self.get_vocabulary(vocabulary)
         return [
@@ -190,23 +223,11 @@ class TaggingDataset(object):
         ]
 
     def shuffle_train_data(self):
-        zipped_data = list(
-            zip(
-                self.data["train"]["examples"],
-                self.data["train"]["example_lengths"],
-                self.data["train"]["char_max_lengths"],
-            )
-        )
-        random.shuffle(zipped_data)
-        (
+        """
+        Shuffles the training data to prevent the model from learning the order of the data.
+        """
+        unshuffled_data = list(
             self.data["train"]["examples"],
-            self.data["train"]["example_lengths"],
-            self.data["train"]["char_max_lengths"],
-        ) = zip(*zipped_data)
+        )
+        random.shuffle(unshuffled_data)
         self.data["train"]["examples"] = list(self.data["train"]["examples"])
-        self.data["train"]["example_lengths"] = list(
-            self.data["train"]["example_lengths"]
-        )
-        self.data["train"]["char_max_lengths"] = list(
-            self.data["train"]["char_max_lengths"]
-        )

@@ -21,6 +21,9 @@ def read_data_file(file_name):
     """
     Reading the CONNLU format file in the following format:
     [(word1, tag1), (word2, tag2), ...] for each sentence.
+
+    Returns:
+    data (list): List of sentences in the format [(word1, tag1), (word2, tag2), ...] for each sentence.
     """
     with open(file_name, "r") as file:
         lines = file.readlines()

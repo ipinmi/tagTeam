@@ -17,7 +17,7 @@ from torch.autograd import Variable
 
 from model import POS_Tagger
 from data import read_data_file, extract_tokens_tags, get_pretrained_matrix, run_once
-from build_vocab import TaggingDataset
+from build_vocab import POS_Dataset
 
 from model_params import Parameters
 
@@ -79,9 +79,32 @@ def epoch_time(start_time, end_time):
     return elapsed_mins, elapsed_secs
 
 
+def extract_data(directory):
+    """
+    Given a directory, this function extracts the paths for the train, dev, and test files.
+
+    Parameters:
+    directory: str
+        The directory containing the data files
+
+    Returns:
+    paths: dict
+        A dictionary containing the paths for the train, dev, and test files
+    """
+    splits = ["train", "dev", "test"]
+    paths = {}
+    for file in os.listdir(directory):
+        for split in splits:
+            if split in file and file.endswith(".txt"):
+                paths[split] = os.path.join(directory, file)
+
+    return paths
+
+
 def evalution_with_f1_loss(model, data_split, split_name, best_F=0):
     """
-    This function evaluates the model on the given data split and returns the micro F1 score.
+    This function evaluates the model on the given data split
+    and returns the micro F1 score and the average loss.
 
     Parameters:
         model: nn.Module
@@ -109,16 +132,26 @@ def evalution_with_f1_loss(model, data_split, split_name, best_F=0):
 
     with torch.no_grad():
         for example in data_split:
+            # Extend the expected tag sequences for the F1 score calculation
             expected_tag_seqs.extend(example["tag_seq_array"])
+
+            # Word level Input Sequence
             input_sequence = Variable(torch.LongTensor(example["word_array"]))
             input_length = example["word_length"]
+
+            # Character level Input Sequence
             char_input_sequence = example["char_input_list"]
+
+            # Gold standard Tag Sequence
             tags = example["tag_seq_array"]
             tag_sequence = Variable(torch.LongTensor(tags))
 
+            # Create padded character representation and sort by length
             chars_sorted = sorted(
                 char_input_sequence, key=lambda p: len(p), reverse=True
             )
+
+            # Use to recover the char to original sequence positions
             char_seq_recover = {}
             for i, c_i in enumerate(char_input_sequence):
                 for j, c_j in enumerate(chars_sorted):
@@ -132,12 +165,16 @@ def evalution_with_f1_loss(model, data_split, split_name, best_F=0):
 
             char_lengths = [len(c) for c in chars_sorted]
             char_max_len = max(char_lengths)
+
+            # Convert the padded character sequence to a tensor arranged by length
             paddded_char_seq = np.zeros((len(chars_sorted), char_max_len), dtype="int")
+
             for i, char in enumerate(chars_sorted):
                 paddded_char_seq[i, : char_lengths[i]] = char
 
             paddded_char_seq = Variable(torch.LongTensor(paddded_char_seq))
 
+            # Get the predicted tags
             _, pred_tags = model(
                 input_sequence,
                 input_length,
@@ -146,7 +183,7 @@ def evalution_with_f1_loss(model, data_split, split_name, best_F=0):
                 char_seq_recover,
                 tag_sequence,
             )
-
+            # Calculate the loss
             nll_loss = model.loss_function(
                 input_sequence,
                 input_length,
@@ -177,6 +214,15 @@ def evalution_with_f1_loss(model, data_split, split_name, best_F=0):
 
 
 def train():
+    """
+    This function trains the model on the training data and returns the epoch loss
+
+    Returns:
+        epoch_loss: float
+            The average loss over the epoch
+        epoch_steps: int
+            The number of steps taken in the epoch
+    """
     optimizer = torch.optim.SGD(
         model.parameters(),
         lr=model_params.learning_rate,
@@ -186,8 +232,6 @@ def train():
 
     model.train(True)
 
-    # for epoch in range(1, n_epochs + 1):
-    # start_time = time.time()
     epoch_loss = 0.0
     epoch_steps = 0
 
@@ -252,13 +296,37 @@ def train():
         torch.nn.utils.clip_grad_norm_(model.parameters(), model_params.clip)
         optimizer.step()
 
+        # Adjust the learning rate based on the number of steps
+        if epoch_steps % len(final_train_data) == 0:
+            adjusted_lr = model_params.learning_rate / (
+                1 + 0.05 * epoch_steps / len(final_train_data)
+            )
+            for param_group in optimizer.param_groups:
+                param_group["lr"] = adjusted_lr
+
     return epoch_loss, epoch_steps
 
 
 def run_epoch():
-    save_path = f"{model_path}/{lang_code}/{model_name}.pt"
+    """
+    This function runs the training and evaluation loop for the specified number of epochs
+    and saves the model with the best validation loss.
 
-    n_epochs = model_params.num_epochs
+    Returns:
+        train_loss: list
+            The training loss for each epoch
+        dev_loss: list
+            The validation loss for each epoch
+        test_loss: list
+            The test loss for each epoch
+        train_f1_scores: list
+            The training F1 score for each epoch
+        dev_f1_scores: list
+            The validation F1 score for each epoch
+        test_f1_scores: list
+            The test F1 score for each epoch
+    """
+    save_path = f"{model_path}/{lang_code}/{model_name}.pt"
 
     best_dev_loss = float("inf")
     best_train_Fscore = -1.0
@@ -337,7 +405,10 @@ def run_epoch():
 
 
 def run_and_plot():
-    n_epochs = model_params.num_epochs
+    """
+    This function collects the evaluation results and plots the evaluation metrics.
+    The evaluation results are saved to a text file and the plots are saved as a png file.
+    """
 
     # Train and Evaluate the model
     (
@@ -348,6 +419,18 @@ def run_and_plot():
         dev_f1_scores,
         test_f1_scores,
     ) = run_epoch()
+
+    # Save the evaluation results
+    with open(
+        f"{model_path}/{lang_code}/evaluation_results_{model_name}.txt", "w"
+    ) as f:
+        f.write(f"Train Loss: {train_losses[-1]}\n")
+        f.write(f"Dev Loss: {dev_losses[-1]}\n")
+        f.write(f"Test Loss: {test_losses[-1]}\n")
+
+        f.write(f"Train F1 Score: {train_f1_scores[-1]}\n")
+        f.write(f"Dev F1 Score: {dev_f1_scores[-1]}\n")
+        f.write(f"Test F1 Score: {test_f1_scores[-1]}\n")
 
     # Plot the losses with epochs on the x-axis
     plt.figure(figsize=(12, 5))
@@ -415,19 +498,7 @@ def run_and_plot():
     plt.savefig(f"{model_path}/{lang_code}/evaluation_plots_{model_name}.png")
 
 
-def extract_data(directory):
-    splits = ["train", "dev", "test"]
-    paths = {}
-    for file in os.listdir(directory):
-        for split in splits:
-            if split in file and file.endswith(".txt"):
-                paths[split] = os.path.join(directory, file)
-
-    return paths
-
-
 if __name__ == "__main__":
-    # TODO: Add arguments to the parser for all the hyperparameters
 
     # Exract file path for train, test, dev from directory
     data_paths = extract_data(data_path)
@@ -440,7 +511,7 @@ if __name__ == "__main__":
     _, _, dev_data, _ = extract_tokens_tags(raw_dev_data)
     _, _, test_data, _ = extract_tokens_tags(raw_test_data)
 
-    train_dev_test = TaggingDataset(training_data, test_data, dev_data)
+    train_dev_test = POS_Dataset(training_data, test_data, dev_data)
 
     text_vocab_obj = train_dev_test.get_vocabulary("word")
     char_vocab_obj = train_dev_test.get_vocabulary("char")
@@ -450,6 +521,7 @@ if __name__ == "__main__":
     model_params = Parameters(
         text_vocab_obj, char_vocab_obj, tag_vocab_obj, pretrained_weights_path
     )
+    n_epochs = model_params.num_epochs
 
     print(f"Copying pretrained weights of {lang_code} to numpy tensor")
 
