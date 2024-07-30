@@ -118,18 +118,27 @@ def plot_model_performance(model_dict):
     fig, axs = plt.subplots(2, 2, figsize=(15, 10))
     fig.suptitle("Ensemble Model Performance")
 
-    for model, data in model_dict.items():
-        axs[0, 0].plot(
-            epochs,
-            data["train_loss"],
-            label=f"{model}",
-        )
-        # axs[0, 1].plot(epochs, data['dev_loss'], label=f'{model} Dev Loss')
-        axs[0, 1].plot(epochs, data["test_loss"], label=f"{model}")
-        axs[1, 0].plot(epochs, data["train_f1"], label=f"{model}")
-        # axs[1, 1].plot(epochs, data['dev_f1'], label=f'{model} Dev F1 Score')
-        axs[1, 1].plot(epochs, data["test_f1"], label=f"{model} ")
+    # List of markers for each model type in the plot
+    markers = [
+        "o",
+        "*",
+        "X",
+        "^",
+        "s",
+        ".",
+    ]
 
+    # Plot the train loss, test loss, train F1 score, and test F1 score for each model type
+    for idx, (model, data) in enumerate(model_dict.items()):
+        # Select the marker for the current model type from the list of markers
+        marker = markers[idx]
+
+        axs[0, 0].plot(epochs, data["train_loss"], label=f"{model}", marker=marker)
+        axs[0, 1].plot(epochs, data["test_loss"], label=f"{model}", marker=marker)
+        axs[1, 0].plot(epochs, data["train_f1"], label=f"{model}", marker=marker)
+        axs[1, 1].plot(epochs, data["test_f1"], label=f"{model}", marker=marker)
+
+    # Set the titles and labels for the subplots
     axs[0, 0].set_title("Train Loss")
     axs[0, 1].set_title("Test Loss")
     axs[1, 0].set_title("Train F1 Score")
@@ -142,7 +151,6 @@ def plot_model_performance(model_dict):
         ax.grid(True)
 
     plt.tight_layout()
-    plt.savefig(f"{model_path}/{lang_code}/{lang_code}-ensemble_plots.png")
     plt.show()
 
 
