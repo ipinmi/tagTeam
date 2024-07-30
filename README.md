@@ -1,13 +1,8 @@
-#### @Author: Chibundum Adebayo
+#### @Author: Chibundum Adebayo for BiLSTM-CRF Model Implementation
 
 # TagTeam
 
 Computational Linguistics Team Laboratory Project on Part-Of-Speech Tagging.
-
-## Team Members
-
-- [Chibundum Adebayo]
-- [Hao-En Hsu]
 
 ## Project Setup for BiLSTM-CRF Model
 
@@ -22,7 +17,11 @@ pip install -r requirements.txt
 ### 1. Download and create the data files for the four languages (English, German, Chinese and Afrikaans), run the following command:
 
 ```python
-# Language codes for the four languages: English (en), German (de), Chinese (zh), Afrikaans (af)
+# Language codes for the four languages:
+# English (en),
+# German (de),
+# Chinese (zh),
+# Afrikaans (af)
 python ud_conllu_convert.py --lang_code={language} --ud_data_dir=ud_pos_data
 ```
 
@@ -33,6 +32,14 @@ python fasttext_embed.py --lang_code={language}  --embedding_dir=embeddings
 ```
 
 ### 3. Set experimental hyperparameters for the BiLSTM-CRF model in the `model_params.py` file
+
+To train different ensemble models, modify the following hyperparameters with either `True` or `False`:
+
+```python
+self.use_pretrained = False # Set to True to use pretrained word embeddings
+self.use_char = False # Set to True to use character-level embeddings
+self.with_crf = False # Set to True to predict using CRF layer, if False, use Bilstm Softmax layer
+```
 
 ### 4. Train and save the BiLSTM-CRF model for the four languages (English, German, Chinese and Afrikaans) run the following command:
 
@@ -61,7 +68,7 @@ python train.py --lang_code={language} --data_dir=ud_pos_data --embedding_dir=em
 | Chinese | | | |
 | Afrikaans | | | |
 
-## Project Milestones
+## Project Milestones for TagTeam
 
 - [x] Project Setup
 - [x] Evaluation implementation for POS tagging

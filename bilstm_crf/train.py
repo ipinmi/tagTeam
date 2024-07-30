@@ -1,6 +1,6 @@
 # @Author: Chibundum Adebayo
 
-# Sample usage: python train.py --lang_code=zh --data_dir=ud_pos_data --embedding_dir=embeddings --model_path=model
+# Sample usage: python train.py --lang_code=de/Users/ipinmi/Desktop/pos/bilstm_crf/combined_plot.py --data_dir=ud_pos_data --embedding_dir=embeddings --model_path=model
 import sys
 import argparse
 import os
@@ -297,12 +297,13 @@ def train():
         optimizer.step()
 
         # Adjust the learning rate based on the number of steps
-        if epoch_steps % len(final_train_data) == 0:
-            adjusted_lr = model_params.learning_rate / (
-                1 + 0.05 * epoch_steps / len(final_train_data)
-            )
-            for param_group in optimizer.param_groups:
-                param_group["lr"] = adjusted_lr
+        if model_params.reduce_lr:
+            if epoch_steps % len(final_train_data) == 0:
+                adjusted_lr = model_params.learning_rate / (
+                    1 + model_params.lr_decay * epoch_steps / len(final_train_data)
+                )
+                for param_group in optimizer.param_groups:
+                    param_group["lr"] = adjusted_lr
 
     return epoch_loss, epoch_steps
 
@@ -420,17 +421,55 @@ def run_and_plot():
         test_f1_scores,
     ) = run_epoch()
 
-    # Save the evaluation results
-    with open(
-        f"{model_path}/{lang_code}/evaluation_results_{model_name}.txt", "w"
-    ) as f:
-        f.write(f"Train Loss: {train_losses[-1]}\n")
-        f.write(f"Dev Loss: {dev_losses[-1]}\n")
-        f.write(f"Test Loss: {test_losses[-1]}\n")
+    # Keys to extract from the model parameters
+    keys_to_extract = [
+        "char_emb_dim",
+        "char_hidden_dim",
+        "word_emb_dim",
+        "word_hidden_dim",
+        "dropout",
+        "num_lstm_layer",
+        "num_epochs",
+        "learning_rate",
+        "reduce_lr",
+        "lr_decay",
+        "clip",
+        "momentum",
+        "word_vocab_size",
+        "char_vocab_size",
+        "tag_vocab_size",
+    ]
 
-        f.write(f"Train F1 Score: {train_f1_scores[-1]}\n")
-        f.write(f"Dev F1 Score: {dev_f1_scores[-1]}\n")
-        f.write(f"Test F1 Score: {test_f1_scores[-1]}\n")
+    # Extracting the values for the specified keys
+    extracted_values = {key: model_params.__dict__.get(key) for key in keys_to_extract}
+
+    ### Save train, dev, test losses and F1 scores for combined plotting with ensemble models
+    with open(f"{model_path}/{lang_code}/loss_f1_{lang_code}.txt", "a") as f:
+        f.write(f"Model: {model_name} Model Evaluation\n")
+        f.write(f"Hyperparameters: {extracted_values}\n")
+        f.write("\n")
+        f.write(f"Train Loss: {train_losses}\n")
+        f.write(f"Dev Loss: {dev_losses}\n")
+        f.write(f"Test Loss: {test_losses}\n")
+        f.write("\n")
+        f.write(f"Train F1 Score: {train_f1_scores}\n")
+        f.write(f"Dev F1 Score: {dev_f1_scores}\n")
+        f.write(f"Test F1 Score: {test_f1_scores}\n")
+        f.write("\n")
+
+    # Save the evaluation results
+    with open(f"{model_path}/{lang_code}/evaluation_results_{lang_code}.txt", "a") as f:
+        f.write(f"Model: {model_name} Model Evaluation\n")
+        f.write(f"Hyperparameters: {extracted_values}\n")
+        f.write("\n")
+        f.write(f"Train Loss: {round(train_losses[-1], 3)}\n")
+        f.write(f"Dev Loss: {round(dev_losses[-1], 3)}\n")
+        f.write(f"Test Loss: {round(test_losses[-1],3)}\n")
+        f.write("\n")
+        f.write(f"Train F1 Score: {round(train_f1_scores[-1], 3)}\n")
+        f.write(f"Dev F1 Score: {round(dev_f1_scores[-1], 3)}\n")
+        f.write(f"Test F1 Score: {round(test_f1_scores[-1], 3)}\n")
+        f.write("\n")
 
     # Plot the losses with epochs on the x-axis
     plt.figure(figsize=(12, 5))
@@ -494,8 +533,8 @@ def run_and_plot():
 
     plt.tight_layout()
     plt.legend()
-    plt.show()
     plt.savefig(f"{model_path}/{lang_code}/evaluation_plots_{model_name}.png")
+    plt.show()
 
 
 if __name__ == "__main__":
@@ -536,7 +575,7 @@ if __name__ == "__main__":
     final_test_data = train_dev_test.data["test"]["examples"]
 
     # Model naming convention
-    model_name_config = [model_params.lang_code]
+    model_name_config = [lang_code]
 
     # Add configuration based on model settings
     if model_params.use_char:
