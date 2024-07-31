@@ -1,11 +1,10 @@
 # @Author: Chibundum Adebayo
-
 import matplotlib.pyplot as plt
 import argparse
 
-# Sample usage: python combined_plot.py --lang_code=de --model_path=model
+# Sample usage: python combined_plot.py --lang_code=af --model_path=model
 
-# Arguments for plotting the model performance
+# Arguments for plotting
 parser = argparse.ArgumentParser(description="Part of Speech Tagging")
 parser.add_argument(
     "--lang_code",
@@ -61,7 +60,7 @@ def parse_model_data(file_path):
                     lambda x: round(float(x), 5),
                     line.split(":")[1].strip()[1:-1].split(", "),
                 )
-            )[:-1]
+            )[1:]
 
         elif line.startswith("Dev Loss:"):
             models[current_model]["dev_loss"] = list(
@@ -118,7 +117,6 @@ def plot_model_performance(model_dict):
     fig, axs = plt.subplots(2, 2, figsize=(15, 10))
     fig.suptitle("Ensemble Model Performance")
 
-    # List of markers for each model type in the plot
     markers = [
         "o",
         "*",
@@ -126,9 +124,7 @@ def plot_model_performance(model_dict):
         "^",
         "s",
         ".",
-    ]
-
-    # Plot the train loss, test loss, train F1 score, and test F1 score for each model type
+    ]  # List of markers for each model type
     for idx, (model, data) in enumerate(model_dict.items()):
         # Select the marker for the current model type from the list of markers
         marker = markers[idx]
@@ -138,7 +134,6 @@ def plot_model_performance(model_dict):
         axs[1, 0].plot(epochs, data["train_f1"], label=f"{model}", marker=marker)
         axs[1, 1].plot(epochs, data["test_f1"], label=f"{model}", marker=marker)
 
-    # Set the titles and labels for the subplots
     axs[0, 0].set_title("Train Loss")
     axs[0, 1].set_title("Test Loss")
     axs[1, 0].set_title("Train F1 Score")
@@ -151,6 +146,7 @@ def plot_model_performance(model_dict):
         ax.grid(True)
 
     plt.tight_layout()
+    plt.savefig(f"{model_path}/{lang_code}/{lang_code}-ensemble_plot.png")
     plt.show()
 
 
