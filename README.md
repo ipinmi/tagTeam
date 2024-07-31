@@ -51,27 +51,6 @@ self.with_crf = False # Set to True to predict using CRF layer, if False, use Bi
 python train.py --lang_code={language} --data_dir=ud_pos_data --embedding_dir=embeddings --model_path=model
 ```
 
-## Evaluation Results for BiLSTM-CRF Model
-
-**Evaluation results for the Train,Test and dev data:**
-
-**Micro Averaging F1-Score:**
-
-|           | Train | Dev | Test |
-| --------- | ----- | --- | ---- |
-| German    |       |     |      |
-| English   |       |     |      |
-| Chinese   |       |     |      |
-| Afrikaans |       |     |      |
-
-**Negative Likelihood Loss:**
-| | Train | Dev | Test |
-| --------- | ----- | --- | ---- |
-| German | | | |
-| English | | | |
-| Chinese | | | |
-| Afrikaans | | | |
-
 ## Project Milestones for TagTeam
 
 - [x] Project Setup
