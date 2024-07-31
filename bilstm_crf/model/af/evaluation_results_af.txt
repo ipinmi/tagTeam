@@ -1,0 +1,91 @@
+Model: af_bilstm Model Evaluation
+Hyperparameters: {'pretrained_emd_path': 'embeddings/af_pretrained_weights.pt', 'char_vocab': <build_vocab.Vocabulary object at 0x14d9572f0>, 'word_vocab': <build_vocab.Vocabulary object at 0x14d56f140>, 'tag_vocab': <build_vocab.Vocabulary object at 0x14e7ff4a0>, 'word_vocab_size': 5083, 'char_vocab_size': 89, 'word_emb_dim': 100, 'char_emb_dim': 25, 'tag_vocab_size': 18, 'start_tag': '<sos>', 'stop_tag': '<eos>', 'padding_index': 0, 'use_pretrained': False, 'use_char': False, 'with_crf': False, 'batch_size': 10, 'char_hidden_dim': 30, 'word_hidden_dim': 200, 'dropout': 0.3, 'num_lstm_layer': 1, 'num_epochs': 10, 'gpu': True, 'learning_rate': 0.015, 'reduce_lr': True, 'lr_decay': 1e-06, 'clip': 5.0, 'momentum': 0.9}
+
+Train Loss: 0.007
+Dev Loss: 0.019
+Test Loss: 0.02
+
+Train F1 Score: 0.968
+Dev F1 Score: 0.906
+Test F1 Score: 0.9
+
+Model: af_char_bilstm Model Evaluation
+Hyperparameters: {'char_hidden_dim': 30, 'word_emb_dim': 100, 'word_hidden_dim': 200, 'dropout': 0.3, 'num_lstm_layer': 1, 'num_epochs': 10, 'learning_rate': 0.015, 'reduce_lr': True, 'lr_decay': 1e-06, 'clip': 5.0, 'momentum': 0.9, 'word_vocab_size': 5083, 'char_vocab_size': 89, 'tag_vocab_size': 18}
+
+Train Loss: 0.006
+Dev Loss: 0.015
+Test Loss: 0.015
+
+Train F1 Score: 0.971
+Dev F1 Score: 0.911
+Test F1 Score: 0.914
+
+Model: af_bilstm_crf Model Evaluation
+Hyperparameters: {'char_hidden_dim': 30, 'word_emb_dim': 100, 'word_hidden_dim': 200, 'dropout': 0.3, 'num_lstm_layer': 1, 'num_epochs': 10, 'learning_rate': 0.015, 'reduce_lr': True, 'lr_decay': 1e-06, 'clip': 5.0, 'momentum': 0.9, 'word_vocab_size': 5083, 'char_vocab_size': 89, 'tag_vocab_size': 18}
+
+Train Loss: 0.045
+Dev Loss: 0.34
+Test Loss: 0.35
+
+Train F1 Score: 0.989
+Dev F1 Score: 0.924
+Test F1 Score: 0.919
+
+Model: af_char_bilstm_crf Model Evaluation
+Hyperparameters: {'char_hidden_dim': 30, 'word_emb_dim': 100, 'word_hidden_dim': 200, 'dropout': 0.3, 'num_lstm_layer': 1, 'num_epochs': 10, 'learning_rate': 0.015, 'reduce_lr': True, 'lr_decay': 1e-06, 'clip': 5.0, 'momentum': 0.9, 'word_vocab_size': 5083, 'char_vocab_size': 89, 'tag_vocab_size': 18}
+
+Train Loss: 0.045
+Dev Loss: 0.268
+Test Loss: 0.263
+
+Train F1 Score: 0.989
+Dev F1 Score: 0.939
+Test F1 Score: 0.941
+
+
+Model: af_pretrained_bilstm_crf Model Evaluation
+Hyperparameters: {'char_hidden_dim': 30, 'word_emb_dim': 100, 'word_hidden_dim': 200, 'dropout': 0.3, 'num_lstm_layer': 1, 'num_epochs': 10, 'learning_rate': 0.001, 'reduce_lr': True, 'lr_decay': 1e-06, 'clip': 5.0, 'momentum': 0.9, 'word_vocab_size': 5083, 'char_vocab_size': 89, 'tag_vocab_size': 18}
+
+Train Loss: 0.203
+Dev Loss: 0.809
+Test Loss: 0.867
+
+Train F1 Score: 0.958
+Dev F1 Score: 0.897
+Test F1 Score: 0.901
+
+Model: af_char_pretrained_bilstm_crf Model Evaluation
+Hyperparameters: {'char_hidden_dim': 30, 'word_emb_dim': 100, 'word_hidden_dim': 200, 'dropout': 0.5, 'num_lstm_layer': 1, 'num_epochs': 10, 'learning_rate': 0.001, 'reduce_lr': True, 'lr_decay': 1e-06, 'clip': 5.0, 'momentum': 0.9, 'word_vocab_size': 5083, 'char_vocab_size': 89, 'tag_vocab_size': 18}
+
+Train Loss: 0.281
+Dev Loss: 0.637
+Test Loss: 0.623
+
+Train F1 Score: 0.94
+Dev F1 Score: 0.885
+Test F1 Score: 0.882
+
+Model: af_char_pretrained_bilstm_crf Model Evaluation
+Hyperparameters: {'char_hidden_dim': 30, 'word_emb_dim': 100, 'word_hidden_dim': 200, 'dropout': 0.15, 'num_lstm_layer': 1, 'num_epochs': 10, 'learning_rate': 0.015, 'reduce_lr': True, 'lr_decay': 1e-06, 'clip': 5.0, 'momentum': 0.9, 'word_vocab_size': 5083, 'char_vocab_size': 89, 'tag_vocab_size': 18}
+
+Train Loss: 0.04
+Dev Loss: 0.431
+Test Loss: 0.396
+
+Train F1 Score: 0.99
+Dev F1 Score: 0.927
+Test F1 Score: 0.926
+
+### same 
+
+Model: af_char_pretrained_bilstm_crf Model Evaluation
+Hyperparameters: {'char_hidden_dim': 30, 'word_emb_dim': 100, 'word_hidden_dim': 200, 'dropout': 0.15, 'num_lstm_layer': 1, 'num_epochs': 10, 'learning_rate': 0.015, 'reduce_lr': True, 'lr_decay': 1e-06, 'clip': 5.0, 'momentum': 0.9, 'word_vocab_size': 5083, 'char_vocab_size': 89, 'tag_vocab_size': 18}
+
+Train Loss: 0.04
+Dev Loss: 0.431
+Test Loss: 0.396
+
+Train F1 Score: 0.99
+Dev F1 Score: 0.927
+Test F1 Score: 0.926
+

@@ -1,0 +1,88 @@
+Model: en_bilstm Model Evaluation
+Hyperparameters: {'char_emb_dim': 25, 'char_hidden_dim': 30, 'word_emb_dim': 100, 'word_hidden_dim': 200, 'dropout': 0.3, 'num_lstm_layer': 1, 'num_epochs': 10, 'learning_rate': 0.0015, 'reduce_lr': False, 'lr_decay': 1e-06, 'clip': 5.0, 'momentum': 0.9, 'word_vocab_size': 17757, 'char_vocab_size': 201, 'tag_vocab_size': 20}
+
+Train Loss: 0.034
+Dev Loss: 0.057
+Test Loss: 0.057
+
+Train F1 Score: 0.916
+Dev F1 Score: 0.864
+Test F1 Score: 0.852
+
+Model: en_char_bilstm Model Evaluation
+Hyperparameters: {'char_emb_dim': 25, 'char_hidden_dim': 30, 'word_emb_dim': 100, 'word_hidden_dim': 200, 'dropout': 0.3, 'num_lstm_layer': 1, 'num_epochs': 10, 'learning_rate': 0.0015, 'reduce_lr': False, 'lr_decay': 1e-06, 'clip': 5.0, 'momentum': 0.9, 'word_vocab_size': 17757, 'char_vocab_size': 201, 'tag_vocab_size': 20}
+
+Train Loss: 0.032
+Dev Loss: 0.045
+Test Loss: 0.041
+
+Train F1 Score: 0.924
+Dev F1 Score: 0.903
+Test F1 Score: 0.898
+
+Model: en_char_pretrained_bilstm Model Evaluation
+Hyperparameters: {'char_emb_dim': 25, 'char_hidden_dim': 30, 'word_emb_dim': 100, 'word_hidden_dim': 200, 'dropout': 0.3, 'num_lstm_layer': 1, 'num_epochs': 10, 'learning_rate': 0.0015, 'reduce_lr': False, 'lr_decay': 1e-06, 'clip': 5.0, 'momentum': 0.9, 'word_vocab_size': 17757, 'char_vocab_size': 201, 'tag_vocab_size': 20}
+
+Train Loss: 0.036
+Dev Loss: 0.054
+Test Loss: 0.079
+
+Train F1 Score: 0.922
+Dev F1 Score: 0.872
+Test F1 Score: 0.864
+
+Model: en_bilstm_crf Model Evaluation
+Hyperparameters: {'char_emb_dim': 25, 'char_hidden_dim': 30, 'word_emb_dim': 100, 'word_hidden_dim': 200, 'dropout': 0.3, 'num_lstm_layer': 1, 'num_epochs': 10, 'learning_rate': 0.0015, 'reduce_lr': False, 'lr_decay': 1e-06, 'clip': 5.0, 'momentum': 0.9, 'word_vocab_size': 17757, 'char_vocab_size': 201, 'tag_vocab_size': 20}
+
+Train Loss: 0.156
+Dev Loss: 0.296
+Test Loss: 0.344
+
+Train F1 Score: 0.96
+Dev F1 Score: 0.916
+Test F1 Score: 0.901
+
+Model: en_pretrained_bilstm_crf Model Evaluation
+Hyperparameters: {'char_emb_dim': 25, 'char_hidden_dim': 30, 'word_emb_dim': 100, 'word_hidden_dim': 200, 'dropout': 0.15, 'num_lstm_layer': 1, 'num_epochs': 10, 'learning_rate': 0.0001, 'reduce_lr': False, 'lr_decay': 1e-06, 'clip': 5.0, 'momentum': 0.9, 'word_vocab_size': 17757, 'char_vocab_size': 201, 'tag_vocab_size': 20}
+
+Train Loss: 0.38
+Dev Loss: 0.489
+Test Loss: 0.562
+
+Train F1 Score: 0.912
+Dev F1 Score: 0.869
+Test F1 Score: 0.861
+
+Model: en_char_pretrained_bilstm_crf Model Evaluation
+Hyperparameters: {'char_emb_dim': 25, 'char_hidden_dim': 30, 'word_emb_dim': 100, 'word_hidden_dim': 200, 'dropout': 0.15, 'num_lstm_layer': 1, 'num_epochs': 10, 'learning_rate': 0.0001, 'reduce_lr': False, 'lr_decay': 1e-06, 'clip': 5.0, 'momentum': 0.9, 'word_vocab_size': 17757, 'char_vocab_size': 201, 'tag_vocab_size': 20}
+
+Train Loss: 0.391
+Dev Loss: 0.488
+Test Loss: 0.569
+
+Train F1 Score: 0.912
+Dev F1 Score: 0.884
+Test F1 Score: 0.872
+
+Model: en_char_pretrained_bilstm_crf Model Evaluation
+Hyperparameters: {'char_emb_dim': 25, 'char_hidden_dim': 30, 'word_emb_dim': 100, 'word_hidden_dim': 200, 'dropout': 0.15, 'num_lstm_layer': 1, 'num_epochs': 10, 'learning_rate': 0.0005, 'reduce_lr': False, 'lr_decay': 1e-06, 'clip': 5.0, 'momentum': 0.9, 'word_vocab_size': 17757, 'char_vocab_size': 201, 'tag_vocab_size': 20}
+
+Train Loss: 0.199
+Dev Loss: 0.416
+Test Loss: 0.514
+
+Train F1 Score: 0.955
+Dev F1 Score: 0.909
+Test F1 Score: 0.899
+
+Model: en_char_pretrained_bilstm_crf Model Evaluation
+Hyperparameters: {'char_emb_dim': 25, 'char_hidden_dim': 30, 'word_emb_dim': 100, 'word_hidden_dim': 200, 'dropout': 0.3, 'num_lstm_layer': 1, 'num_epochs': 10, 'learning_rate': 0.0005, 'reduce_lr': False, 'lr_decay': 1e-06, 'clip': 5.0, 'momentum': 0.9, 'word_vocab_size': 17757, 'char_vocab_size': 201, 'tag_vocab_size': 20}
+
+Train Loss: 0.232
+Dev Loss: 0.419
+Test Loss: 0.511
+
+Train F1 Score: 0.952
+Dev F1 Score: 0.917
+Test F1 Score: 0.906
+
