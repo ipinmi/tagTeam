@@ -1,4 +1,4 @@
-# @Author: Chibundum Adebayo
+# @Author: Chibundum Adebayo, Hao-En Hsu
 from hmm import *
 
 
