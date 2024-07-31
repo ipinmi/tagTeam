@@ -1,3 +1,5 @@
+# @author: Hao-En Hsu
+
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -20,31 +22,31 @@ torch.backends.cudnn.deterministic = True
 # Hyperparameters
 BATCH_SIZE = 8
 LEARNING_RATE = 5e-5
-N_EPOCHS = 3
+N_EPOCHS = 10
 DROPOUT = 0.15
 MODEL_SAVE_PATH_TEMPLATE = 'bert-pos-tagger-model-{}.pt'
 
 # Define paths to datasets
 DATA_PATHS = {
     'mandarin': {
-        'train': 'C:/tagTeam/zh_gsd-ud-train.txt',
-        'valid': 'C:/tagTeam/zh_gsd-ud-dev.txt',
-        'test': 'C:/tagTeam/zh_gsd-ud-test.txt'
+        'train': '/mount/arbeitsdaten65/studenten4/team-lab-cl/data2024/tagteam/UDdata/UD_Mandarin/zh_gsd-ud-train.txt',
+        'valid': '/mount/arbeitsdaten65/studenten4/team-lab-cl/data2024/tagteam/UDdata/UD_Mandarin/zh_gsd-ud-dev.txt',
+        'test': '/mount/arbeitsdaten65/studenten4/team-lab-cl/data2024/tagteam/UDdata/UD_Mandarin/zh_gsd-ud-test.txt'
     },
     'english': {
-        'train': 'C:/tagTeam/en_gum-ud-train.txt',
-        'valid': 'C:/tagTeam/en_gum-ud-dev.txt',
-        'test': 'C:/tagTeam/en_gum-ud-test.txt'
+        'train': '/mount/arbeitsdaten65/studenten4/team-lab-cl/data2024/tagteam/UDdata/UD_English/en_gum-ud-train.txt',
+        'valid': '/mount/arbeitsdaten65/studenten4/team-lab-cl/data2024/tagteam/UDdata/UD_English/en_gum-ud-dev.txt',
+        'test': '/mount/arbeitsdaten65/studenten4/team-lab-cl/data2024/tagteam/UDdata/UD_English/en_gum-ud-test.txt'
     },
     'german': {
-        'train': 'C:/tagTeam/de_gsd-ud-train.txt',
-        'valid': 'C:/tagTeam/de_gsd-ud-dev.txt',
-        'test': 'C:/tagTeam/de_gsd-ud-test.txt'
+        'train': '/mount/arbeitsdaten65/studenten4/team-lab-cl/data2024/tagteam/UDdata/UD_German/de_gsd-ud-train.txt',
+        'valid': '/mount/arbeitsdaten65/studenten4/team-lab-cl/data2024/tagteam/UDdata/UD_German/de_gsd-ud-dev.txt',
+        'test': '/mount/arbeitsdaten65/studenten4/team-lab-cl/data2024/tagteam/UDdata/UD_German/de_gsd-ud-test.txt'
     },
-    'afrikaan': {
-        'train': 'C:/tagTeam/af_afribooms-ud-train.txt',
-        'valid': 'C:/tagTeam/af_afribooms-ud-dev.txt',
-        'test': 'C:/tagTeam/af_afribooms-ud-test.txt'
+    'afrikaans': {
+        'train': '/mount/arbeitsdaten65/studenten4/team-lab-cl/data2024/tagteam/UDdata/UD_Afrikaans/af_afribooms-ud-train.txt',
+        'valid': '/mount/arbeitsdaten65/studenten4/team-lab-cl/data2024/tagteam/UDdata/UD_Afrikaans/af_afribooms-ud-dev.txt',
+        'test': '/mount/arbeitsdaten65/studenten4/team-lab-cl/data2024/tagteam/UDdata/UD_Afrikaans/af_afribooms-ud-test.txt'
     }
 }
 
@@ -53,7 +55,7 @@ BERT_MODELS = {
     'mandarin': 'bert-base-chinese',
     'english': 'bert-base-uncased',
     'german': 'bert-base-german-cased',
-    'afrikaan': 'bert-base-multilingual-cased'
+    'afrikaans': 'bert-base-multilingual-cased'
 }
 
 # Preprocessing functions
@@ -90,7 +92,7 @@ def cut_to_max_length(tokens, max_input_length):
 class LoadDataset(Dataset):
     def __init__(self, path, fields, **kwargs):
         """
-        Custom dataset class to handle loading of data.
+        Dataset class to handle loading of data.
         
         Parameters:
         path (str): Path to the dataset file.
@@ -172,13 +174,13 @@ def calculate_f1(preds, y, tag_pad_idx):
     tag_pad_idx (int): Padding index for tags.
     
     Returns:
-    float: F1 score.
+    F1 score.
     """
     max_preds = preds.argmax(dim=1, keepdim=True)
     non_pad_elements = (y != tag_pad_idx).nonzero(as_tuple=True)
     y_pred = max_preds[non_pad_elements].squeeze(1).cpu().numpy()
     y_true = y[non_pad_elements].cpu().numpy()
-    return f1_score(y_true, y_pred, average='weighted')
+    return f1_score(y_true, y_pred, average='micro')
 
 def train(model, iterator, optimizer, criterion, tag_pad_idx, pad_token_idx, print_every=10):
     """
@@ -359,7 +361,7 @@ def main(language):
     train_losses, valid_losses, test_losses = [], [], []
     train_f1s, valid_f1s, test_f1s = [], [], []
 
-    f1_results_file = 'final_f1_scores.txt'
+    f1_results_file = 'results_BERTtagger.txt'
 
     for epoch in range(N_EPOCHS):
         start_time = time.time()
@@ -420,5 +422,5 @@ def main(language):
     plt.show()
 
 # Select the language for training
-language = 'afrikaan'  # Choose from 'mandarin', 'english', 'german', 'afrikaan'
+language = 'english'  # Choose from 'mandarin', 'english', 'german', 'afrikaans'
 main(language)
