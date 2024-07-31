@@ -1,4 +1,4 @@
-# @Author: Chibundum Adebayo
+# @Author: Chibundum Adebayo (main), Hao-En Hsu
 
 import numpy as np
 
