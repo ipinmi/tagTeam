@@ -24,9 +24,9 @@ def read_dataset(file_path):
     return sentences
 
 # Read the datasets
-train_sentences = read_dataset('C:/tagTeam/dataset/train.col')
-test_sentences = read_dataset('C:/tagTeam/dataset/test.col')
-dev_sentences = read_dataset('C:/tagTeam/dataset/dev.col')
+train_sentences = read_dataset('/mount/arbeitsdaten65/studenten4/team-lab-cl/data2024/tagteam/BaselineData/train.col')
+test_sentences = read_dataset('/mount/arbeitsdaten65/studenten4/team-lab-cl/data2024/tagteam/BaselineData/test.col')
+dev_sentences = read_dataset('/mount/arbeitsdaten65/studenten4/team-lab-cl/data2024/tagteam/BaselineData/dev.col')
 
 # Combine training and development sentences for training
 combined_train_sentences = train_sentences + dev_sentences
