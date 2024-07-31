@@ -1,3 +1,5 @@
+# @author: Hao-En Hsu
+
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -23,21 +25,21 @@ LEARNING_RATE = 5e-5
 N_EPOCHS = 10
 DROPOUT = 0.15
 
-TRAIN_DATA_PATH = 'C:/tagTeam/af_afribooms-ud-train.txt'
-VALID_DATA_PATH = 'C:/tagTeam/af_afribooms-ud-dev.txt'
-TEST_DATA_PATH = 'C:/tagTeam/af_afribooms-ud-test.txt'
+TRAIN_DATA_PATH = '/mount/arbeitsdaten65/studenten4/team-lab-cl/data2024/tagteam/UDdata/UD_Afrikaans/af_afribooms-ud-train.txt'    
+VALID_DATA_PATH = '/mount/arbeitsdaten65/studenten4/team-lab-cl/data2024/tagteam/UDdata/UD_Afrikaans/af_afribooms-ud-dev.txt'  
+TEST_DATA_PATH = '/mount/arbeitsdaten65/studenten4/team-lab-cl/data2024/tagteam/UDdata/UD_Afrikaans/af_afribooms-ud-test.txt'  
 
 # Language selection
-language = 'english'  # Choose from 'mandarin', 'english', 'german'
+language = 'german'  # Choose from 'mandarin', 'english', 'german'
 
 if language == 'mandarin':
-    model_path = 'C:/tagTeam/bert-pos-tagger-model-mandarin.pt'
+    model_path = '/mount/arbeitsdaten65/studenten4/team-lab-cl/data2024/tagteam/pretrained models/bert-pos-tagger-model-mandarin.pt'
 elif language == 'german':
-    model_path = 'C:/tagTeam/bert-pos-tagger-model-german.pt'
+    model_path = '/mount/arbeitsdaten65/studenten4/team-lab-cl/data2024/tagteam/pretrained models/bert-pos-tagger-model-german.pt'
 elif language == 'english':
-    model_path = 'C:/tagTeam/bert-pos-tagger-model-english.pt'
+    model_path = '/mount/arbeitsdaten65/studenten4/team-lab-cl/data2024/tagteam/pretrained models/bert-pos-tagger-model-english.pt'
 else:
-    raise ValueError("Language not supported. Please choose 'mandarin', 'german', or 'english'.")
+    raise ValueError("Language not supported.")
 
 # Load BERT tokenizer
 tokenizer = BertTokenizer.from_pretrained('bert-base-multilingual-cased')
@@ -260,7 +262,7 @@ def train_model(model, iterator, optimizer, criterion, tag_pad_idx, print_every=
         epoch_f1 += f1
 
         if (i + 1) % print_every == 0:
-            print(f'Step: {i+1:04} | Step Loss: {loss.item():.3f} | Step F1: {f1:.2f}')
+            print(f'Step: {i+1:04} | Step Loss: {loss.item():.3f} | Step F1: {f1:.4f}')
 
     return epoch_loss / len(iterator), epoch_f1 / len(iterator)
 
@@ -305,13 +307,13 @@ def calculate_f1(preds, y, tag_pad_idx):
     - tag_pad_idx (int): Index of the padding token in the tag vocabulary.
 
     Returns:
-    - f1 (float): Weighted F1 score.
+    - micro F1 score.
     """
     max_preds = preds.argmax(dim=1, keepdim=True)
     non_pad_elements = (y != tag_pad_idx).nonzero(as_tuple=True)
     y_pred = max_preds[non_pad_elements].squeeze(1).cpu().numpy()
     y_true = y[non_pad_elements].cpu().numpy()
-    return f1_score(y_true, y_pred, average='weighted')
+    return f1_score(y_true, y_pred, average='micro')
 
 def epoch_time(start_time, end_time):
     """
@@ -372,7 +374,7 @@ def load_pretrained_model(model_path, output_dim, device):
 
     return model
 
-def write_results_to_file(epoch, train_loss, valid_loss, valid_f1, test_f1, language, file_path='results.txt'):
+def write_results_to_file(epoch, train_loss, valid_loss, valid_f1, test_f1, language, file_path='results_TL.txt'):
     """
     Writes training and evaluation results to a file.
 
@@ -383,15 +385,15 @@ def write_results_to_file(epoch, train_loss, valid_loss, valid_f1, test_f1, lang
     - valid_f1 (float): Validation F1 score.
     - test_f1 (float): Test F1 score.
     - language (str): Language identifier.
-    - file_path (str): File path to write results (default: 'results.txt').
+    - file_path (str): File path to write results (default: 'results_TL.txt').
     """
     with open(file_path, 'a') as f:
         f.write(f'Language: {language}\n')
         f.write(f'Epoch: {epoch+1}\n')
         f.write(f'Train Loss: {train_loss:.3f}\n')
         f.write(f'Validation Loss: {valid_loss:.3f}\n')
-        f.write(f'Validation F1: {valid_f1:.2f}\n')
-        f.write(f'Test F1: {test_f1:.2f}\n\n')
+        f.write(f'Validation F1: {valid_f1:.4f}\n')
+        f.write(f'Test F1: {test_f1:.4f}\n\n')
 
 def main(language):
     """
@@ -436,8 +438,8 @@ def main(language):
 
         print(f'Epoch: {epoch+1:02} | Epoch Time: {epoch_mins}m {epoch_secs}s')
         print(f'\tTrain Loss: {train_loss:.3f}')
-        print(f'\t Val. Loss: {valid_loss:.3f} |  Val. F1: {valid_f1:.2f}')
-        print(f'\t Test F1: {test_f1:.2f}')
+        print(f'\t Val. Loss: {valid_loss:.3f} |  Val. F1: {valid_f1:.4f}')
+        print(f'\t Test F1: {test_f1:.4f}')
 
     # Plot training and validation loss
     plt.figure(figsize=(8, 6))
