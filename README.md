@@ -10,6 +10,10 @@ Computational Linguistics Team Laboratory Project on Part-Of-Speech Tagging.
 python3 -m venv lstm_crf
 source lstm_crf/bin/activate
 pip install -r requirements.txt
+
+# With Conda Environment
+conda create --name lstm_crf --file requirements.txt
+conda activate lstm_crf
 ```
 
 ## Steps to collect the Universal Dependencies data and run the BiLSTM-CRF model
